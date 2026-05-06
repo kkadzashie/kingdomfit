@@ -3,7 +3,7 @@ import psycopg2, psycopg2.extras, hashlib, os
 from datetime import date, timedelta
 
 app = Flask(__name__, static_folder='public', static_url_path='')
-DATABASE_URL = os.environ.get('DATABASE_URL', 'postgresql://postgres.imwjvmpnwtjwvkwralzl:S!WvhY7GhtRJR@KQQldo@aws-1-us-west-2.pooler.supabase.com:5432/postgres')
+DATABASE_URL = os.environ.get('DATABASE_URL')
 
 def get_db():
     conn = psycopg2.connect(DATABASE_URL, cursor_factory=psycopg2.extras.RealDictCursor)
