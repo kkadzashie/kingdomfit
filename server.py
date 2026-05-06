@@ -3,7 +3,7 @@ import sqlite3, hashlib, os, json
 from datetime import date, datetime
 
 app = Flask(__name__, static_folder='public', static_url_path='')
-DB = '/data/kingdomfit.db'
+DB = 'kingdomfit.db'
 
 def get_db():
     db = sqlite3.connect(DB)
