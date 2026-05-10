@@ -184,7 +184,7 @@ def login():
     user = cur.fetchone(); cur.close(); conn.close()
     if not user or user['pin_hash']!=hash_pin(pin):
         return jsonify(error='Invalid name or PIN'),401
-    return jsonify(id=user['id'],name=user['name'],is_admin=user['is_admin'])
+    return jsonify(id=user['id'],name=user['name'],is_admin=user.get('is_admin',False))
 
 # ── Workouts ──────────────────────────────────────────────────────────────────
 @app.route('/api/workouts', methods=['POST'])
