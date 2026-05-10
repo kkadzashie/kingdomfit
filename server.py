@@ -1,6 +1,18 @@
 from flask import Flask, request, jsonify, send_from_directory
 import psycopg2, psycopg2.extras, hashlib, os, secrets
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
+import pytz
+
+# Arizona never observes DST — always UTC-7
+AZ_TZ = pytz.timezone('America/Phoenix')
+
+def az_today():
+    """Current date in Arizona time."""
+    return datetime.now(AZ_TZ).date()
+
+def az_month():
+    """Current YYYY-MM in Arizona time."""
+    return datetime.now(AZ_TZ).strftime('%Y-%m')
 
 app = Flask(__name__, static_folder='public', static_url_path='')
 DATABASE_URL = os.environ.get('DATABASE_URL')
@@ -29,9 +41,10 @@ def init_db():
             activity TEXT NOT NULL,
             duration_minutes INTEGER NOT NULL,
             notes TEXT DEFAULT '',
-            logged_at TIMESTAMP DEFAULT NOW(),
-            UNIQUE(user_id, log_date)
+            logged_at TIMESTAMP DEFAULT NOW()
         );
+        CREATE UNIQUE INDEX IF NOT EXISTS workouts_user_date_activity
+            ON workouts(user_id, log_date, activity);
         CREATE TABLE IF NOT EXISTS reactions (
             id SERIAL PRIMARY KEY,
             workout_id INTEGER NOT NULL REFERENCES workouts(id) ON DELETE CASCADE,
@@ -75,17 +88,27 @@ def hash_pin(pin):
 
 def calc_streak(workouts):
     if not workouts: return 0
-    dates = set(str(w['log_date'])[:10] for w in workouts)
+    # Only count days with >=30 min total
+    day_totals = {}
+    for w in workouts:
+        dk = str(w['log_date'])[:10]
+        day_totals[dk] = day_totals.get(dk, 0) + (w.get('duration_minutes') or 0)
+    qualified = set(dk for dk,total in day_totals.items() if total >= 30)
     streak = 0
-    d = date.today()
-    while d.isoformat() in dates:
+    d = az_today()
+    while d.isoformat() in qualified:
         streak += 1
         d -= timedelta(days=1)
     return streak
 
 def calc_longest_streak(workouts):
     if not workouts: return 0
-    dates = sorted(set(str(w['log_date'])[:10] for w in workouts))
+    day_totals = {}
+    for w in workouts:
+        dk = str(w['log_date'])[:10]
+        day_totals[dk] = day_totals.get(dk, 0) + (w.get('duration_minutes') or 0)
+    dates = sorted(dk for dk,total in day_totals.items() if total >= 30)
+    if not dates: return 0
     best = cur = 1
     for i in range(1, len(dates)):
         diff = (date.fromisoformat(dates[i]) - date.fromisoformat(dates[i-1])).days
@@ -122,21 +145,25 @@ def check_badges(user_id, conn):
     if streak>=7: award('streak_7')
     if streak>=14: award('streak_14')
     if streak>=30: award('streak_30')
-    now = date.today()
+    now = az_today()
     mk = now.strftime('%Y-%m')
     import calendar
     days_in_month = calendar.monthrange(now.year,now.month)[1]
-    month_dates = set(str(w['log_date'])[:10] for w in ws if str(w['log_date'])[:7]==mk)
-    mc = len(month_dates)
+    month_day_totals = {}
+    for w in ws:
+        dk = str(w['log_date'])[:10]
+        if dk[:7]==mk:
+            month_day_totals[dk] = month_day_totals.get(dk,0) + (w.get('duration_minutes') or 0)
+    mc = sum(1 for t in month_day_totals.values() if t>=30)
     if mc>=days_in_month: award('perfect_month')
     if mc>=10: award('days_10')
     if mc>=20: award('days_20')
     acts = set(w['activity'] for w in ws)
     if len(acts)>=5: award('variety_5')
     dates_sorted = sorted(str(w['log_date'])[:10] for w in ws)
-    today_s = date.today().isoformat()
+    today_s = az_today().isoformat()
     if len(dates_sorted)>=2 and dates_sorted[-1]==today_s:
-        gap = (date.today()-date.fromisoformat(dates_sorted[-2])).days
+        gap = (az_today()-date.fromisoformat(dates_sorted[-2])).days
         if gap>=6: award('comeback')
     cur.execute('SELECT COUNT(*) as cnt FROM users WHERE id<=%s',(user_id,))
     if cur.fetchone()['cnt']<=5: award('early_bird')
@@ -194,11 +221,11 @@ def log_workout():
     activity=data.get('activity','').strip(); duration=data.get('duration_minutes')
     notes=data.get('notes','').strip()
     if not all([user_id,log_date,activity,duration]): return jsonify(error='Missing fields'),400
-    if int(duration)<30: return jsonify(error='Minimum 30 minutes required'),400
+    if int(duration)<1: return jsonify(error='Duration must be at least 1 minute'),400
     try:
         log_d = date.fromisoformat(log_date)
-        if log_d>date.today(): return jsonify(error='Cannot log future dates'),400
-        if (date.today()-log_d).days>7: return jsonify(error='Can only log up to 7 days back'),400
+        if log_d>az_today(): return jsonify(error='Cannot log future dates'),400
+        if (az_today()-log_d).days>7: return jsonify(error='Can only log up to 7 days back'),400
     except: return jsonify(error='Invalid date'),400
     conn = get_db(); cur = conn.cursor()
     try:
@@ -206,16 +233,24 @@ def log_workout():
                     (user_id,log_date,activity,int(duration),notes))
         wid = cur.fetchone()['id']; conn.commit()
         new_badges = check_badges(user_id,conn)
-        return jsonify(id=wid,new_badges=new_badges)
+        # Check if day now qualifies (>=30 min total)
+        cur.execute('SELECT COALESCE(SUM(duration_minutes),0) as total FROM workouts WHERE user_id=%s AND log_date=%s',(user_id,log_date))
+        day_total = cur.fetchone()['total']
+        return jsonify(id=wid,new_badges=new_badges,day_total=day_total,day_qualifies=day_total>=30)
     except psycopg2.errors.UniqueViolation:
-        conn.rollback(); return jsonify(error='Already logged for this date'),409
+        conn.rollback(); return jsonify(error='Already logged this activity for this date — try a different activity'),409
     finally:
         cur.close(); conn.close()
 
 @app.route('/api/workouts/<int:user_id>/<log_date>', methods=['DELETE'])
 def delete_workout(user_id,log_date):
     conn=get_db(); cur=conn.cursor()
-    cur.execute('DELETE FROM workouts WHERE user_id=%s AND log_date=%s',(user_id,log_date))
+    # Delete all sessions for that day, or by workout id if numeric
+    try:
+        wid = int(log_date)
+        cur.execute('DELETE FROM workouts WHERE id=%s AND user_id=%s',(wid,user_id))
+    except ValueError:
+        cur.execute('DELETE FROM workouts WHERE user_id=%s AND log_date=%s',(user_id,log_date))
     conn.commit(); cur.close(); conn.close()
     return jsonify(ok=True)
 
@@ -293,19 +328,24 @@ def get_records(user_id):
 # ── Leaderboard ───────────────────────────────────────────────────────────────
 @app.route('/api/leaderboard')
 def leaderboard():
-    month=request.args.get('month',date.today().strftime('%Y-%m'))
+    month=request.args.get('month',az_today().strftime('%Y-%m'))
     conn=get_db(); cur=conn.cursor()
     cur.execute('SELECT id,name FROM users ORDER BY id')
     users=cur.fetchall(); board=[]
     for u in users:
-        cur.execute("SELECT log_date FROM workouts WHERE user_id=%s AND TO_CHAR(log_date,'YYYY-MM')=%s",(u['id'],month))
+        cur.execute("SELECT log_date,duration_minutes FROM workouts WHERE user_id=%s AND TO_CHAR(log_date,'YYYY-MM')=%s",(u['id'],month))
         mws=cur.fetchall()
-        cur.execute('SELECT log_date FROM workouts WHERE user_id=%s ORDER BY log_date DESC',(u['id'],))
+        cur.execute('SELECT log_date,duration_minutes FROM workouts WHERE user_id=%s ORDER BY log_date DESC',(u['id'],))
         aws=cur.fetchall()
         cur.execute('SELECT badge_key FROM badges WHERE user_id=%s',(u['id'],))
         bkeys=[r['badge_key'] for r in cur.fetchall()]
-        streak=calc_streak([dict(w) for w in aws])
-        days=len(mws); pts=days+(streak*2)
+        # Count days with >=30 min total for the month
+        day_totals_m = {}
+        for w in mws:
+            dk = str(w['log_date'])[:10]
+            day_totals_m[dk] = day_totals_m.get(dk,0) + (w.get('duration_minutes') or 0)
+        days = sum(1 for t in day_totals_m.values() if t>=30)
+        streak=calc_streak([dict(w) for w in aws]); pts=days+(streak*2)
         board.append(dict(id=u['id'],name=u['name'],totalDays=days,streak=streak,points=pts,badges=bkeys))
     cur.close(); conn.close()
     board.sort(key=lambda x:(-x['points'],-x['streak'],-x['totalDays']))
@@ -315,16 +355,20 @@ def leaderboard():
 @app.route('/api/h2h')
 def h2h():
     u1=request.args.get('u1',type=int); u2=request.args.get('u2',type=int)
-    month=request.args.get('month',date.today().strftime('%Y-%m'))
+    month=request.args.get('month',az_today().strftime('%Y-%m'))
     conn=get_db(); cur=conn.cursor(); result={}
     for uid in [u1,u2]:
-        cur.execute("SELECT log_date FROM workouts WHERE user_id=%s AND TO_CHAR(log_date,'YYYY-MM')=%s",(uid,month))
+        cur.execute("SELECT log_date,duration_minutes FROM workouts WHERE user_id=%s AND TO_CHAR(log_date,'YYYY-MM')=%s",(uid,month))
         mws=cur.fetchall()
-        cur.execute('SELECT log_date FROM workouts WHERE user_id=%s ORDER BY log_date DESC',(uid,))
+        cur.execute('SELECT log_date,duration_minutes FROM workouts WHERE user_id=%s ORDER BY log_date DESC',(uid,))
         aws=cur.fetchall()
         cur.execute('SELECT name FROM users WHERE id=%s',(uid,))
         name=cur.fetchone()['name']
-        streak=calc_streak([dict(w) for w in aws]); days=len(mws)
+        dt_m={};
+        for w in mws:
+            dk=str(w['log_date'])[:10]; dt_m[dk]=dt_m.get(dk,0)+(w.get('duration_minutes') or 0)
+        days=sum(1 for t in dt_m.values() if t>=30)
+        streak=calc_streak([dict(w) for w in aws])
         result[str(uid)]=dict(name=name,days=days,streak=streak,points=days+streak*2)
     cur.close(); conn.close(); return jsonify(result)
 

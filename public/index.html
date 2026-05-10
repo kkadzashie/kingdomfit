@@ -56,6 +56,7 @@ textarea{resize:none;height:72px}
 .cal-day.today{box-shadow:0 0 0 1.5px var(--gold);color:var(--gold)}
 .cal-day.active.today{color:#0a0a0a}
 .cal-day.future{opacity:.3;cursor:default}
+.cal-day.partial{background:var(--gb);border:1px dashed var(--gold);color:var(--gold)}
 .cal-day.empty{background:transparent;cursor:default}
 .cal-day.past-unlogged:hover{background:var(--sf3)}
 .board-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--bd)}
@@ -122,6 +123,21 @@ textarea{resize:none;height:72px}
 .admin-user-row:last-child{border-bottom:none}
 .invite-code{background:var(--sf2);border:1px solid var(--bd);border-radius:var(--rsm);padding:10px 14px;font-family:monospace;font-size:14px;letter-spacing:.08em;display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
 .copy-btn{background:none;border:none;color:var(--gold);cursor:pointer;font-size:12px;font-weight:600}
+.timer-screen{position:fixed;inset:0;background:var(--bg);z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px}
+.timer-clock{font-family:'DM Serif Display',serif;font-size:80px;line-height:1;letter-spacing:-2px;color:var(--tx);margin:24px 0}
+.timer-clock.ready{color:var(--gold)}
+.timer-ring{width:220px;height:220px;position:relative;margin:0 auto}
+.timer-ring svg{transform:rotate(-90deg)}
+.timer-ring-bg{fill:none;stroke:var(--sf2);stroke-width:8}
+.timer-ring-fill{fill:none;stroke:var(--gold);stroke-width:8;stroke-linecap:round;transition:stroke-dashoffset .5s linear;stroke-dasharray:628}
+.timer-ring-fill.complete{stroke:var(--gr)}
+.timer-time-overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.timer-btn-row{display:flex;gap:12px;margin-top:32px;width:100%}
+.timer-act-label{font-size:14px;color:var(--tx2);margin-top:8px}
+.timer-status{font-size:13px;font-weight:500;margin-top:4px;min-height:20px}
+.timer-status.green{color:var(--gr)}
+.pulse{animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
 </style>
 </head>
 <body>
@@ -323,7 +339,7 @@ textarea{resize:none;height:72px}
         <option>CrossFit</option><option>Other</option>
       </select>
     </div>
-    <div class="field"><label>Duration (minutes)</label><input type="number" id="log-duration" min="30" max="480" placeholder="e.g. 45" inputmode="numeric"></div>
+    <div class="field"><label>Duration (minutes)</label><input type="number" id="log-duration" min="30" max="480" placeholder="e.g. 20" inputmode="numeric"></div>
     <div class="field"><label>Notes (optional)</label><textarea id="log-notes" placeholder="e.g. 3 mile run, felt strong..."></textarea></div>
     <div style="display:flex;align-items:flex-start;gap:10px;margin:4px 0 12px;padding:12px;background:var(--sf2);border-radius:var(--rsm);border:1px solid var(--bd2)">
       <input type="checkbox" id="log-honor" style="width:18px;height:18px;flex-shrink:0;margin-top:2px;accent-color:var(--gold)">
@@ -335,13 +351,50 @@ textarea{resize:none;height:72px}
   </div>
 </div>
 
+<!-- WORKOUT TIMER -->
+<div id="timer-screen" class="timer-screen" style="display:none">
+  <button class="btn btn-ghost" style="position:absolute;top:20px;left:20px;width:auto;padding:8px 12px;margin:0" onclick="closeTimer()">✕ Cancel</button>
+  <div id="timer-activity-pick" style="width:100%;text-align:center">
+    <h2 style="margin-bottom:6px">Start workout</h2>
+    <p class="muted" style="margin-bottom:20px;font-size:13px">Pick your activity to begin the timer</p>
+    <select id="timer-activity-select" style="margin-bottom:16px">
+      <option value="">Select activity...</option>
+      <option>Running / Jogging</option><option>Walking (brisk)</option><option>Cycling</option>
+      <option>Swimming</option><option>Weight training</option><option>HIIT / Circuit training</option>
+      <option>Basketball</option><option>Football / Soccer</option><option>Tennis / Racket sports</option>
+      <option>Yoga / Pilates</option><option>Jump rope</option><option>Martial arts / Boxing</option>
+      <option>Dance / Zumba</option><option>Rowing</option><option>Hiking</option>
+      <option>CrossFit</option><option>Other</option>
+    </select>
+    <button class="btn btn-gold" onclick="startTimer()" style="margin-top:8px">Start timer</button>
+  </div>
+  <div id="timer-running" style="display:none;width:100%;text-align:center">
+    <div class="timer-ring">
+      <svg width="220" height="220" viewBox="0 0 220 220">
+        <circle class="timer-ring-bg" cx="110" cy="110" r="100"/>
+        <circle class="timer-ring-fill" id="timer-ring-fill" cx="110" cy="110" r="100" stroke-dashoffset="628"/>
+      </svg>
+      <div class="timer-time-overlay">
+        <div class="timer-clock" id="timer-clock">00:00</div>
+        <div class="timer-status" id="timer-status">Keep going...</div>
+      </div>
+    </div>
+    <div class="timer-act-label" id="timer-act-label"></div>
+    <div class="timer-btn-row">
+      <button class="btn" id="timer-pause-btn" onclick="togglePause()" style="flex:1;margin-bottom:0">Pause</button>
+      <button class="btn btn-gold" id="timer-done-btn" onclick="finishTimer()" style="flex:1;margin-bottom:0;opacity:.5" disabled>Done</button>
+    </div>
+    <p class="muted" style="font-size:11px;margin-top:12px" id="timer-min-note">Log unlocks at 30 minutes</p>
+  </div>
+</div>
+
 <!-- BADGE TOAST -->
 <div id="badge-toast" style="position:fixed;top:20px;left:50%;transform:translateX(-50%);background:var(--sf);border:1px solid var(--gb);border-radius:var(--r);padding:12px 20px;display:none;z-index:200;text-align:center;min-width:200px">
   <div id="badge-toast-content"></div>
 </div>
 
 <!-- FAB -->
-<button id="fab" onclick="openModal()" style="display:none;position:fixed;bottom:28px;right:24px;width:56px;height:56px;border-radius:50%;background:var(--gold);border:none;cursor:pointer;box-shadow:0 4px 20px rgba(201,168,76,.35);z-index:50;align-items:center;justify-content:center">
+<button id="fab" onclick="openTimerOrModal()" style="display:none;position:fixed;bottom:28px;right:24px;width:56px;height:56px;border-radius:50%;background:var(--gold);border:none;cursor:pointer;box-shadow:0 4px 20px rgba(201,168,76,.35);z-index:50;align-items:center;justify-content:center">
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
 </button>
 
@@ -443,30 +496,59 @@ async function loadData(){
   renderToday();
 }
 
-function todayStr(){var n=new Date();return n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0')}
+function todayStr(){
+  // Arizona = UTC-7, no DST
+  var n=new Date(new Date().toLocaleString('en-US',{timeZone:'America/Phoenix'}));
+  return n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0');
+}
 
 function calcStreak(){
   if(!workoutsCache.length)return 0;
-  var dates=new Set(workoutsCache.map(function(w){return(w.log_date+'').slice(0,10)}));
-  var streak=0,d=new Date();
-  while(true){var k=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');if(dates.has(k)){streak++;d.setDate(d.getDate()-1)}else break}
+  // Build day totals, only count days >= 30 min
+  var dayTotals={};
+  workoutsCache.forEach(function(w){
+    var dk=(w.log_date+'').slice(0,10);
+    dayTotals[dk]=(dayTotals[dk]||0)+w.duration_minutes;
+  });
+  var qualified=new Set(Object.keys(dayTotals).filter(function(dk){return dayTotals[dk]>=30}));
+  var streak=0;
+  var now=new Date(new Date().toLocaleString('en-US',{timeZone:'America/Phoenix'}));
+  var d=new Date(now);
+  while(true){
+    var k=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+    if(qualified.has(k)){streak++;d.setDate(d.getDate()-1)}else break;
+  }
   return streak;
 }
 
 function renderToday(){
   var today=todayStr();
-  var todayW=workoutsCache.find(function(w){return(w.log_date+'').slice(0,10)===today});
-  var streak=calcStreak();var days=workoutsCache.length;var pts=days+streak*2;
-  var now=new Date();var pct=Math.round(days/now.getDate()*100);
+  var todaySessions=workoutsCache.filter(function(w){return(w.log_date+'').slice(0,10)===today});
+  var todayMins=todaySessions.reduce(function(s,w){return s+w.duration_minutes},0);
+  var todayQualifies=todayMins>=30;
+  var streak=calcStreak();
+  // Count qualified days (>=30 min total)
+  var dayTotals={};
+  workoutsCache.forEach(function(w){var dk=(w.log_date+'').slice(0,10);dayTotals[dk]=(dayTotals[dk]||0)+w.duration_minutes});
+  var days=Object.values(dayTotals).filter(function(t){return t>=30}).length;
+  var pts=days+streak*2;
+  var now=new Date(new Date().toLocaleString('en-US',{timeZone:'America/Phoenix'}));
+  var pct=Math.round(days/now.getDate()*100);
   document.getElementById('st-streak').textContent=streak;
   document.getElementById('st-days').textContent=days;
   document.getElementById('st-pts').textContent=pts;
   document.getElementById('st-pct').textContent=pct+'%';
   var tc=document.getElementById('today-card');
-  if(todayW){
-    tc.innerHTML='<div class="card card-green"><div class="row" style="margin-bottom:8px"><div class="pill pill-green"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Logged</div></div><div style="font-size:18px;font-weight:600;margin-bottom:2px">'+todayW.activity+'</div><div class="muted" style="font-size:13px">'+todayW.duration_minutes+' min'+(todayW.notes?' · '+todayW.notes:'')+'</div></div>';
+  if(todaySessions.length>0){
+    var totalMin=todayMins;
+    var qualBadge=todayQualifies?'<div class="pill pill-green" style="margin-bottom:8px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Day complete ('+totalMin+' min)</div>':'<div class="pill" style="background:var(--amber-dim,var(--gd));margin-bottom:8px;color:var(--gold)">'+totalMin+' / 30 min — keep going!</div>';
+    var sessHtml=todaySessions.map(function(w){return '<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--bd)"><div class="workout-dot"></div><div style="flex:1;font-size:14px;font-weight:500">'+w.activity+'</div><div style="font-size:12px;color:var(--tx2)">'+w.duration_minutes+' min</div></div>';}).join('');
+    tc.innerHTML='<div class="card card-'+(todayQualifies?'green':'gold')+'">'+qualBadge+sessHtml+'</div>';
   }else{
-    tc.innerHTML='<button class="btn btn-green" onclick="openModal(null)" style="margin-bottom:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Log today\'s workout</button>';
+    tc.innerHTML='<div style="display:flex;gap:10px">'
+    +'<button class="btn btn-green" onclick="openTimer()" style="margin-bottom:0;flex:1"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Start timer</button>'
+    +'<button class="btn" onclick="openModal(null)" style="margin-bottom:0;flex:1;font-size:13px">Log manually</button>'
+    +'</div>';
   }
   renderWorkoutHistory();
 }
@@ -474,13 +556,14 @@ function renderToday(){
 function workoutItemHTML(w,tab){
   var months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   var dateStr=(w.log_date+'').slice(0,10);
+  var itemKey=String(w.id); // use workout id for deletion
   var d=new Date(dateStr+'T12:00:00');
   var label=months[d.getMonth()]+' '+d.getDate();
-  var isSel=selected[tab].has(dateStr);
+  var isSel=selected[tab].has(itemKey);
   var left=editMode[tab]
-    ?'<div class="workout-cb'+(isSel?' checked':'')+'" onclick="event.stopPropagation();toggleSel(\''+tab+'\',\''+dateStr+'\')"><svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="#0a0a0a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"'+(isSel?'':' style="display:none"')+'><polyline points="2 6 5 9 10 3"/></svg></div>'
+    ?'<div class="workout-cb'+(isSel?' checked':'')+'" onclick="event.stopPropagation();toggleSel(\''+tab+'\',\''+itemKey+'\')"><svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="#0a0a0a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"'+(isSel?'':' style="display:none"')+'><polyline points="2 6 5 9 10 3"/></svg></div>'
     :'<div class="workout-dot" style="margin-top:6px"></div>';
-  return '<div class="workout-item'+(isSel?' selected':'')+'" data-date="'+dateStr+'" data-tab="'+tab+'" onclick="'+(editMode[tab]?'toggleSel(\''+tab+'\',\''+dateStr+'\')':'')+'">'
+  return '<div class="workout-item'+(isSel?' selected':'')+'" data-date="'+itemKey+'" data-tab="'+tab+'" onclick="'+(editMode[tab]?'toggleSel(\''+tab+'\',\''+itemKey+'\')':'')+'">'
     +left+'<div class="workout-info"><div class="workout-act">'+w.activity+'</div><div class="workout-meta">'+label+' · '+w.duration_minutes+' min'+(w.notes?' · '+w.notes:'')+'</div></div></div>';
 }
 
@@ -540,7 +623,8 @@ function renderCalendar(){
   var now=new Date();
   var months=['January','February','March','April','May','June','July','August','September','October','November','December'];
   document.getElementById('cal-month-label').textContent=months[now.getMonth()]+' '+now.getFullYear();
-  var dates=new Set(workoutsCache.map(function(w){return(w.log_date+'').slice(0,10)}));
+  var dayTotalsMap={};
+  workoutsCache.forEach(function(w){var dk=(w.log_date+'').slice(0,10);dayTotalsMap[dk]=(dayTotalsMap[dk]||0)+w.duration_minutes});
   var first=new Date(now.getFullYear(),now.getMonth(),1).getDay();
   var total=new Date(now.getFullYear(),now.getMonth()+1,0).getDate();
   var grid=document.getElementById('cal-grid');grid.innerHTML='';
@@ -549,7 +633,8 @@ function renderCalendar(){
     var k=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(day).padStart(2,'0');
     var el=document.createElement('div');
     var cls='cal-day';
-    if(dates.has(k))cls+=' active';
+    if(dayTotalsMap[k]&&dayTotalsMap[k]>=30)cls+=' active';
+    else if(dayTotalsMap[k])cls+=' partial';
     if(day===now.getDate())cls+=' today';
     if(day>now.getDate())cls+=' future';
     var isFuture=day>now.getDate();
@@ -822,7 +907,7 @@ function openModal(dateOverride){
     document.getElementById('log-modal-sub').textContent='Logging for '+months[d.getMonth()]+' '+d.getDate();
   }else{
     document.getElementById('log-modal-title').textContent='Log workout';
-    document.getElementById('log-modal-sub').textContent='Minimum 30 minutes of physical activity';
+    document.getElementById('log-modal-sub').textContent='Log any session — 30 min cumulative per day earns a point';
   }
 }
 
@@ -835,7 +920,7 @@ async function submitWorkout(){
   var err=document.getElementById('log-err');
   if(!activity){err.textContent='Select an activity';return}
   if(!duration||duration<30){err.textContent='Minimum 30 minutes';return}
-  if(!document.getElementById('log-honor').checked){err.textContent='Please confirm your workout with the integrity checkbox';return}
+  if(!document.getElementById('log-honor').checked){err.textContent='Please confirm your workout with the integrity checkbox to proceed';return}
   var logDate=logDateTarget||todayStr();
   try{
     var r=await fetch(API+'/api/workouts',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({user_id:user.id,log_date:logDate,activity,duration_minutes:duration,notes})});
@@ -897,6 +982,105 @@ async function changePin(){
     err.textContent='';
     alert('PIN updated successfully!');
   }catch(e){err.textContent='Connection error'}
+}
+
+// ── Workout Timer ─────────────────────────────────────────────────────────────
+var timerInterval=null, timerSeconds=0, timerPaused=false, timerActivity='';
+var THIRTY_MIN=1800;
+
+function openTimerOrModal(dateOverride){
+  if(dateOverride){openModal(dateOverride);return;}
+  openTimer();
+}
+
+function openTimer(){
+  document.getElementById('timer-screen').style.display='flex';
+  document.getElementById('timer-activity-pick').style.display='block';
+  document.getElementById('timer-running').style.display='none';
+  document.getElementById('timer-activity-select').value='';
+  document.getElementById('fab').style.display='none';
+  timerSeconds=0; timerPaused=false;
+  if(timerInterval){clearInterval(timerInterval);timerInterval=null;}
+}
+
+function closeTimer(){
+  if(timerInterval&&timerSeconds>60){
+    if(!confirm('Stop timer? Your progress will be lost.'))return;
+  }
+  if(timerInterval){clearInterval(timerInterval);timerInterval=null;}
+  document.getElementById('timer-screen').style.display='none';
+  document.getElementById('fab').style.display='flex';
+}
+
+function startTimer(){
+  var act=document.getElementById('timer-activity-select').value;
+  if(!act){alert('Please select an activity');return;}
+  timerActivity=act; timerSeconds=0; timerPaused=false;
+  document.getElementById('timer-activity-pick').style.display='none';
+  document.getElementById('timer-running').style.display='block';
+  document.getElementById('timer-act-label').textContent=act;
+  document.getElementById('timer-done-btn').disabled=true;
+  document.getElementById('timer-done-btn').style.opacity='.5';
+  document.getElementById('timer-pause-btn').textContent='Pause';
+  updateTimerDisplay();
+  timerInterval=setInterval(function(){
+    if(!timerPaused){
+      timerSeconds++;
+      updateTimerDisplay();
+    }
+  },1000);
+}
+
+function updateTimerDisplay(){
+  var mins=Math.floor(timerSeconds/60);
+  var secs=timerSeconds%60;
+  document.getElementById('timer-clock').textContent=
+    String(mins).padStart(2,'0')+':'+String(secs).padStart(2,'0');
+  // Ring — full circle at 60 min, unlocks at 30 min
+  var pct=Math.min(timerSeconds/THIRTY_MIN,1);
+  var offset=628-(628*pct);
+  var ring=document.getElementById('timer-ring-fill');
+  ring.style.strokeDashoffset=offset;
+  // Status
+  var statusEl=document.getElementById('timer-status');
+  var doneBtn=document.getElementById('timer-done-btn');
+  var noteEl=document.getElementById('timer-min-note');
+  if(timerSeconds>=THIRTY_MIN){
+    ring.classList.add('complete');
+    document.getElementById('timer-clock').style.color='var(--gr)';
+    statusEl.textContent='✓ 30 min reached — great work!';
+    statusEl.className='timer-status green';
+    doneBtn.disabled=false;
+    doneBtn.style.opacity='1';
+    noteEl.style.display='none';
+  } else {
+    var remaining=THIRTY_MIN-timerSeconds;
+    var remMins=Math.floor(remaining/60);
+    var remSecs=remaining%60;
+    statusEl.textContent=remMins+'m '+String(remSecs).padStart(2,'0')+'s until unlock';
+    statusEl.className='timer-status';
+    noteEl.style.display='block';
+  }
+}
+
+function togglePause(){
+  timerPaused=!timerPaused;
+  document.getElementById('timer-pause-btn').textContent=timerPaused?'Resume':'Pause';
+  document.getElementById('timer-status').textContent=timerPaused?'Paused':'Keep going...';
+}
+
+function finishTimer(){
+  if(timerInterval){clearInterval(timerInterval);timerInterval=null;}
+  var mins=Math.round(timerSeconds/60);
+  document.getElementById('timer-screen').style.display='none';
+  document.getElementById('fab').style.display='flex';
+  // Open log modal pre-filled
+  openModal(null);
+  setTimeout(function(){
+    document.getElementById('log-activity').value=timerActivity;
+    document.getElementById('log-duration').value=mins;
+    document.getElementById('log-modal-sub').textContent='Timer: '+String(Math.floor(timerSeconds/60)).padStart(2,'0')+':'+String(timerSeconds%60).padStart(2,'0')+' · Duration pre-filled';
+  },100);
 }
 
 function showBadgeToast(keys){
