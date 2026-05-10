@@ -1,1 +1,801 @@
-<!DOCTYPE html><html lang="en-US"><head><title>Just a moment...</title><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=Edge"><meta name="robots" content="noindex,nofollow"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="content-security-policy" content="default-src &#39;none&#39;; script-src &#39;nonce-lILVmLvUPEMrx3PQN2io2X&#39; &#39;unsafe-eval&#39; https://challenges.cloudflare.com; script-src-attr &#39;none&#39;; style-src &#39;unsafe-inline&#39;; img-src &#39;self&#39; https://challenges.cloudflare.com; connect-src &#39;self&#39; https://challenges.cloudflare.com; frame-src &#39;self&#39; https://challenges.cloudflare.com blob:; child-src &#39;self&#39; https://challenges.cloudflare.com blob:; worker-src blob:; form-action http: https:; base-uri &#39;self&#39;"><style>*{box-sizing:border-box;margin:0;padding:0}html{line-height:1.15;-webkit-text-size-adjust:100%;color:#313131;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji"}body{display:flex;flex-direction:column;height:100vh;min-height:100vh}.main-content{margin:8rem auto;padding-left:1.5rem;max-width:60rem}@media (width <= 720px){.main-content{margin-top:4rem}}#challenge-error-text{background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0ibm9uZSI+PHBhdGggZmlsbD0iI0IyMEYwMyIgZD0iTTE2IDNhMTMgMTMgMCAxIDAgMTMgMTNBMTMuMDE1IDEzLjAxNSAwIDAgMCAxNiAzbTAgMjRhMTEgMTEgMCAxIDEgMTEtMTEgMTEuMDEgMTEuMDEgMCAwIDEtMTEgMTEiLz48cGF0aCBmaWxsPSIjQjIwRjAzIiBkPSJNMTcuMDM4IDE4LjYxNUgxNC44N0wxNC41NjMgOS41aDIuNzgzem0tMS4wODQgMS40MjdxLjY2IDAgMS4wNTcuMzg4LjQwNy4zODkuNDA3Ljk5NCAwIC41OTYtLjQwNy45ODQtLjM5Ny4zOS0xLjA1Ny4zODktLjY1IDAtMS4wNTYtLjM4OS0uMzk4LS4zODktLjM5OC0uOTg0IDAtLjU5Ny4zOTgtLjk4NS40MDYtLjM5NyAxLjA1Ni0uMzk3Ii8+PC9zdmc+");background-repeat:no-repeat;background-size:contain;padding-left:34px}</style><meta http-equiv="refresh" content="360"></head><body><div class="main-wrapper" role="main"><div class="main-content"><noscript><div class="h2"><span id="challenge-error-text">Enable JavaScript and cookies to continue</span></div></noscript></div></div><script nonce="lILVmLvUPEMrx3PQN2io2X">(function(){window._cf_chl_opt = {cFPWv: 'g',cH: '_7F1_JswWRx_mA2245dmcEVw8FmNVIDzQSke4YGpC1E-1778385707-1.2.1.1-FMA7xFAaRp5C.ysWkAqS_8nid5Qz1VyYDFe6QLCNHNpOYEXUu3_u3UIwLMHj9NVJ',cITimeS: '1778385707',cN: 'lILVmLvUPEMrx3PQN2io2X',cRay: '9f960b6d1b06f7dd',cTplB: '0',cTplC:0,cTplO:0,cTplV:5,cType: 'managed',cUPMDTk:"/api/files/index_updated.html?__cf_chl_tk=Q7NqxIj6CqAin5ufBP1u10ZNPNWOhVLDYfTwt8fnj3c-1778385707-1.0.1.1-v6sa9wlsE_r3wXEQH9vJSWMuCselLJdbG.CZiduTpw4",cvId: '3',cZone: 'claude.ai',fa:"/api/files/index_updated.html?__cf_chl_f_tk=Q7NqxIj6CqAin5ufBP1u10ZNPNWOhVLDYfTwt8fnj3c-1778385707-1.0.1.1-v6sa9wlsE_r3wXEQH9vJSWMuCselLJdbG.CZiduTpw4",md: '3wqZhlcBvtHNzZKXruPnsmnIYn9wBe9reLlFgmHY.TE-1778385707-1.2.1.1-Wx9tS1RiFW3WEghyJb5iI.BpNNebMOtCLRvXPeNcol_jmMl8BqM782g2GyMY0OeGm4rPVosrqVfyQxbMYMmalDz3P8uXSH3PTJdf4.Zf3VIeCVH8zDxunCIg3ZNQhIIueAXB8rIB6mUB_WTp7ZZYM1PtEbHFQ0xKBQ8tz1AVkb6_ydenjI01_UV7k7nB7viqKKPdIZfFsmWhnCa4Hnpp4co0OJfUpbdTfxTIGTQwL9JpLXKGcwaihIlcOMGAeKJ6NijU0XYxZsDujjpXnY2zN9KsMMHS.HHSLok27aCmFr9WC4wxhIZD4YTsMzgt4Dnb1HQK6AV5E36WR_nnVpSIjMwZPpSJqicMhfiK3hhIISaPIGiDHyr_uy2hG.DQnBN1g9noPAMpw7VxgAjf6Cyqog4SIeSADy4NurxlQs4YcOpBuwFuOyPOvRObRrjOxbRfTJqyMqkzbZzyonN2wtp6fgYeucF_pBvECVKxcZHFJyHuOnmc.Hij90xx3144VhLyYhirCZSHqgp1cfonx8bOkJG6kk7Cr3qwhE2ksqsfnXYzcWrCCmZtFspFZDIGUksyDPgc8nLlzKXP1rlUs5Sww.DkTicU.K6gCiofnQxFvqDIrSUJm2nODWLZ7cbJK647_k4TzJYJlknBUOQRtCqqwGH_OFhoISmqLUBrkTFmajORjTx2fAHg8ofmlBzC4pPuELU5yZ_oeuR2JAd7Zn5I.1S5sfuoMFbuZBnIpD.f6uWQgXaWN7_c.Gp55o.79kfOrzpSoxdEyzMOXr53jopS97gGGS6ZAsVDgpFm8QE45nisIq6GN5O7h0VHD3wTGjXUonu_ec1rwURPVz777jtfYknCEHASyvhHuXd2G46cgD1Yi6Iyb.rtVdB6zWtxps9vHdr15hVtKpW7eEuWikMtzrlzQbLkb8R1SWPzuCLn_4gAYc2eOqzKeNIB1XTjrHgF',mdrd: 'N4kPj4Ql5gbnsrbZzkfWGnlH9NwLwtAflk9L_y0nnKg-1778385707-1.2.1.1-QRYL5pQDlbtjNhjp8iaphW777VLCxZQfiJfOOiiXDxddtxcuWEPSPiu2bmQY_cR2Gcy.Df6ssKvEYstMT5Sz6eeAqRFaZHZNmMIeUPpVK59Yz0tt3zW_k.JFabxoTWK4QRWl4AdRZ9pzS1rgujPMPA5C2YudUo4iYV5ocNcoeQC3.LfR9p0A9tv3Tu18XCDCbQMeRg2t7e7HaAk5U7IU3DURU8bwjJbTcm4R35fWtVUzwSCWz0wPewX6dL33UxsC',};var a = document.createElement('script');a.nonce = 'lILVmLvUPEMrx3PQN2io2X';a.src = '/cdn-cgi/challenge-platform/h/g/orchestrate/chl_page/v1?ray=9f960b6d1b06f7dd';window._cf_chl_opt.cOgUHash = location.hash === '' && location.href.indexOf('#') !== -1 ? '#' : location.hash;window._cf_chl_opt.cOgUQuery = location.search === '' && location.href.slice(0, location.href.length - window._cf_chl_opt.cOgUHash.length).indexOf('?') !== -1 ? '?' : location.search;if (window.history && window.history.replaceState) {var ogU = location.pathname + window._cf_chl_opt.cOgUQuery + window._cf_chl_opt.cOgUHash;history.replaceState(null, null,"/api/files/index_updated.html?__cf_chl_rt_tk=Q7NqxIj6CqAin5ufBP1u10ZNPNWOhVLDYfTwt8fnj3c-1778385707-1.0.1.1-v6sa9wlsE_r3wXEQH9vJSWMuCselLJdbG.CZiduTpw4"+ window._cf_chl_opt.cOgUHash);a.onload = function() {history.replaceState(null, null, ogU);}}document.getElementsByTagName('head')[0].appendChild(a);}());</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#0a0a0a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Kingdom Fit</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a0a;--sf:#141414;--sf2:#1e1e1e;--sf3:#272727;--bd:rgba(255,255,255,.08);--bd2:rgba(255,255,255,.14);--tx:#f0ede8;--tx2:#8a8680;--tx3:#555250;--gold:#c9a84c;--gd:rgba(201,168,76,.15);--gb:rgba(201,168,76,.3);--gr:#4ade80;--grd:rgba(74,222,128,.1);--grb:rgba(74,222,128,.25);--rd:#f87171;--rdd:rgba(248,113,113,.1);--bl:#60a5fa;--bld:rgba(96,165,250,.1);--pu:#c084fc;--pud:rgba(192,132,252,.1);--r:12px;--rsm:8px}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;font-size:15px;line-height:1.5;overscroll-behavior:none}
+body{display:flex;flex-direction:column;max-width:430px;margin:0 auto;min-height:100dvh}
+.screen{display:none;flex-direction:column;flex:1;animation:fadeIn .2s ease}
+.screen.active{display:flex}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+h1{font-family:'DM Serif Display',serif;font-size:32px;line-height:1.1;font-weight:400}
+h2{font-family:'DM Serif Display',serif;font-size:24px;font-weight:400}
+h3{font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--tx2)}
+.pad{padding:0 20px}.pad-v{padding-top:24px;padding-bottom:24px}
+.row{display:flex;align-items:center;gap:10px}.spacer{flex:1}
+input[type=text],input[type=number],textarea,select{width:100%;padding:13px 16px;background:var(--sf2);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:'DM Sans',sans-serif;font-size:15px;outline:none;transition:border-color .15s}
+input:focus,textarea:focus,select:focus{border-color:var(--gold)}
+select option{background:#1e1e1e}
+textarea{resize:none;height:72px}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:12px;color:var(--tx2);margin-bottom:6px;font-weight:500;letter-spacing:.03em}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px;border-radius:var(--rsm);border:1px solid var(--bd2);background:var(--sf2);color:var(--tx);font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;cursor:pointer;transition:all .15s;margin-bottom:8px;-webkit-appearance:none}
+.btn:active{transform:scale(0.97)}
+.btn-gold{background:var(--gold);border-color:var(--gold);color:#0a0a0a;font-weight:600}
+.btn-ghost{background:transparent;border-color:transparent;color:var(--tx2)}
+.btn-danger{background:var(--rdd);border-color:rgba(248,113,113,.25);color:var(--rd)}
+.btn-green{background:var(--grd);border-color:var(--grb);color:var(--gr);font-weight:600;font-size:16px;padding:18px}
+.btn-sm{width:auto;padding:8px 14px;font-size:13px;margin-bottom:0;border-radius:6px}
+.pin-display{display:flex;gap:14px;justify-content:center;padding:20px 0}
+.pin-dot{width:12px;height:12px;border-radius:50%;border:1.5px solid var(--bd2);transition:all .1s}
+.pin-dot.filled{background:var(--gold);border-color:var(--gold);transform:scale(1.1)}
+.pinpad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:0 20px}
+.pk{padding:18px 8px;background:var(--sf2);border:1px solid var(--bd);border-radius:var(--rsm);font-size:20px;font-weight:500;cursor:pointer;text-align:center;transition:all .12s}
+.pk:active{background:var(--sf3);transform:scale(0.95)}
+.pk-empty{background:transparent!important;border-color:transparent!important;cursor:default}
+.card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:16px;margin-bottom:10px}
+.card-gold{border-color:var(--gb);background:var(--gd)}
+.card-green{border-color:var(--grb);background:var(--grd)}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.stat{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:14px}
+.stat-val{font-family:'DM Serif Display',serif;font-size:34px;line-height:1;color:var(--tx)}
+.stat-val.gold{color:var(--gold)}.stat-val.green{color:var(--gr)}
+.stat-lbl{font-size:11px;color:var(--tx2);margin-top:4px;font-weight:500;letter-spacing:.04em;text-transform:uppercase}
+.cal-header{display:grid;grid-template-columns:repeat(7,1fr);margin-bottom:4px}
+.cal-dow{text-align:center;font-size:10px;color:var(--tx3);font-weight:600;letter-spacing:.05em;padding:4px 0}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.cal-day{aspect-ratio:1;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--tx3);background:var(--sf2);cursor:pointer;transition:all .12s}
+.cal-day.active{background:var(--gold);color:#0a0a0a;font-weight:600}
+.cal-day.today{box-shadow:0 0 0 1.5px var(--gold);color:var(--gold)}
+.cal-day.active.today{color:#0a0a0a}
+.cal-day.future{opacity:.3;cursor:default}
+.cal-day.empty{background:transparent;cursor:default}
+.cal-day.past-unlogged:hover{background:var(--sf3)}
+.board-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--bd)}
+.board-row:last-child{border-bottom:none}
+.board-row.me{background:var(--gd);margin:0 -16px;padding:12px 16px;border-radius:6px;border-color:transparent}
+.rank-badge{width:28px;height:28px;border-radius:50%;background:var(--sf2);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--tx2);flex-shrink:0}
+.rank-badge.gold-rank{background:var(--gold);color:#0a0a0a}
+.rank-badge.silver-rank{background:#9ca3af;color:#0a0a0a}
+.rank-badge.bronze-rank{background:#b45309;color:#0a0a0a}
+.board-pts-val{font-family:'DM Serif Display',serif;font-size:20px;color:var(--gold)}
+.board-pts-lbl{font-size:10px;color:var(--tx3)}
+.streak-badge{display:inline-block;background:var(--gd);border:1px solid var(--gb);color:var(--gold);font-size:10px;font-weight:600;padding:2px 6px;border-radius:99px;margin-left:4px}
+.tabs{display:flex;border-bottom:1px solid var(--bd);margin-bottom:0}
+.tab{flex:1;padding:12px 4px;text-align:center;font-size:13px;font-weight:500;color:var(--tx2);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s}
+.tab.active{color:var(--tx);border-bottom-color:var(--gold)}
+.nav{padding:16px 20px 12px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--bd)}
+.nav-logo{font-family:'DM Serif Display',serif;font-size:20px;color:var(--gold)}
+.avatar{width:34px;height:34px;border-radius:50%;background:var(--gd);border:1px solid var(--gb);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:var(--gold);flex-shrink:0}
+#screen-welcome{justify-content:center;padding:40px 24px}
+.logo-mark{width:64px;height:64px;border-radius:20px;background:var(--gd);border:1px solid var(--gb);display:flex;align-items:center;justify-content:center;margin:0 auto 24px}
+.modal-wrap{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:100;display:flex;flex-direction:column;justify-content:flex-end;animation:slideUp .2s ease}
+@keyframes slideUp{from{opacity:0}to{opacity:1}}
+.modal{background:var(--sf);border-radius:var(--r) var(--r) 0 0;padding:20px;padding-bottom:calc(20px + env(safe-area-inset-bottom));max-height:90dvh;overflow-y:auto}
+.modal-handle{width:36px;height:4px;border-radius:2px;background:var(--bd2);margin:0 auto 20px}
+.workout-item{display:flex;align-items:flex-start;gap:10px;padding:10px 6px;border-bottom:1px solid var(--bd);border-radius:6px;transition:background .1s}
+.workout-item:last-child{border-bottom:none}
+.workout-item.selected{background:var(--gd)}
+.workout-dot{width:8px;height:8px;border-radius:50%;background:var(--gr);margin-top:6px;flex-shrink:0}
+.workout-act{font-weight:500;font-size:14px}
+.workout-meta{font-size:12px;color:var(--tx2);margin-top:2px}
+.workout-cb{width:18px;height:18px;border-radius:4px;border:1.5px solid var(--bd2);background:var(--sf2);cursor:pointer;flex-shrink:0;margin-top:3px;display:flex;align-items:center;justify-content:center;transition:all .12s}
+.workout-cb.checked{background:var(--gold);border-color:var(--gold)}
+.delete-toolbar{position:fixed;bottom:0;left:0;right:0;max-width:430px;margin:0 auto;background:var(--sf);border-top:1px solid var(--bd2);padding:12px 20px;padding-bottom:calc(12px + env(safe-area-inset-bottom));display:flex;align-items:center;gap:10px;z-index:60}
+.edit-btn{background:none;border:none;cursor:pointer;font-size:13px;font-weight:500;color:var(--gold);padding:4px 0}
+.err{font-size:12px;color:var(--rd);text-align:center;min-height:18px;margin-top:6px}
+.muted{color:var(--tx2);font-size:13px}
+.text-center{text-align:center}
+.divider{height:1px;background:var(--bd);margin:16px 0}
+.pill{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:99px;font-size:12px;font-weight:500}
+.pill-green{background:var(--grd);color:var(--gr);border:1px solid var(--grb)}
+.scroll-area{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.badge-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+.badge-item{background:var(--sf2);border:1px solid var(--bd);border-radius:var(--rsm);padding:10px 8px;text-align:center}
+.badge-item.earned{border-color:var(--gb);background:var(--gd)}
+.badge-emoji{font-size:22px;margin-bottom:4px}
+.badge-label{font-size:10px;font-weight:600;color:var(--tx2)}
+.badge-item.earned .badge-label{color:var(--gold)}
+.feed-item{padding:12px 0;border-bottom:1px solid var(--bd)}
+.feed-item:last-child{border-bottom:none}
+.feed-name{font-size:13px;font-weight:600}
+.feed-act{font-size:14px;font-weight:500;margin:2px 0}
+.feed-meta{font-size:11px;color:var(--tx2)}
+.reaction-bar{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.reaction-btn{background:var(--sf2);border:1px solid var(--bd);border-radius:99px;padding:4px 10px;font-size:13px;cursor:pointer;transition:all .12s}
+.reaction-btn.reacted{background:var(--gd);border-color:var(--gb)}
+.reaction-btn:active{transform:scale(0.95)}
+.seg{display:flex;background:var(--sf2);border-radius:var(--rsm);padding:3px;gap:3px;margin-bottom:14px}
+.seg-btn{flex:1;padding:8px;text-align:center;font-size:13px;font-weight:500;color:var(--tx2);border-radius:6px;cursor:pointer;transition:all .15s}
+.seg-btn.active{background:var(--sf);color:var(--tx);box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.winner-card{background:var(--gd);border:1px solid var(--gb);border-radius:var(--r);padding:14px;margin-bottom:8px;display:flex;align-items:center;gap:12px}
+.h2h-bar{height:8px;border-radius:4px;background:var(--sf2);overflow:hidden;margin:6px 0}
+.h2h-fill{height:100%;background:var(--gold);border-radius:4px;transition:width .4s ease}
+.admin-user-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bd)}
+.admin-user-row:last-child{border-bottom:none}
+.invite-code{background:var(--sf2);border:1px solid var(--bd);border-radius:var(--rsm);padding:10px 14px;font-family:monospace;font-size:14px;letter-spacing:.08em;display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.copy-btn{background:none;border:none;color:var(--gold);cursor:pointer;font-size:12px;font-weight:600}
+</style>
+</head>
+<body>
+
+<!-- WELCOME -->
+<div class="screen active" id="screen-welcome" style="justify-content:center;padding:40px 24px">
+  <div class="logo-mark"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.8" stroke-linecap="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+  <h1 class="text-center" style="margin-bottom:10px">Kingdom<br><em style="color:var(--gold)">Fit</em></h1>
+  <p class="muted text-center" style="margin-bottom:12px;line-height:1.6">30 min minimum · Any physical activity<br>Monthly leaderboard · Stay accountable</p>
+  <div id="invite-field" style="display:none;margin-bottom:8px">
+    <div class="field"><label>Invite Code</label><input type="text" id="welcome-invite" placeholder="Enter invite code"></div>
+  </div>
+  <button class="btn btn-gold" onclick="show('screen-login')">Sign in</button>
+  <button class="btn" onclick="show('screen-register')">Create account</button>
+  <p id="invite-note" class="muted text-center" style="font-size:11px;margin-top:8px;display:none">Invite code required to join</p>
+</div>
+
+<!-- REGISTER -->
+<div class="screen" id="screen-register" style="padding:20px 20px 0">
+  <button class="btn btn-ghost" style="width:auto;padding:8px 0;margin-bottom:8px" onclick="show('screen-welcome')">← Back</button>
+  <h2 style="margin-bottom:6px">Join the<br><em style="color:var(--gold)">competition</em></h2>
+  <p class="muted" style="margin-bottom:20px">Choose a name your crew will see on the leaderboard</p>
+  <div class="field"><label>Your name</label><input type="text" id="reg-name" placeholder="e.g. Marcus or Coach D" autocomplete="off" autocorrect="off"></div>
+  <div class="field" id="reg-invite-field" style="display:none"><label>Invite Code</label><input type="text" id="reg-invite" placeholder="Enter invite code" autocomplete="off"></div>
+  <p class="muted" style="font-size:12px;margin-bottom:4px">Choose a 4-digit PIN</p>
+  <div class="pin-display" id="reg-dots"><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div></div>
+  <div class="pinpad" id="reg-pad"></div>
+  <div class="err" id="reg-err"></div>
+  <div style="padding:16px 0"><button class="btn btn-gold" onclick="doRegister()">Create account</button></div>
+</div>
+
+<!-- LOGIN -->
+<div class="screen" id="screen-login" style="padding:20px 20px 0">
+  <button class="btn btn-ghost" style="width:auto;padding:8px 0;margin-bottom:8px" onclick="show('screen-welcome')">← Back</button>
+  <h2 style="margin-bottom:6px">Welcome<br><em style="color:var(--gold)">back</em></h2>
+  <p class="muted" style="margin-bottom:20px">Enter your name then your PIN</p>
+  <div class="field"><label>Your name</label><input type="text" id="login-name" placeholder="Your name" autocomplete="off" autocorrect="off"></div>
+  <p class="muted" style="font-size:12px;margin-bottom:4px">PIN</p>
+  <div class="pin-display" id="login-dots"><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div></div>
+  <div class="pinpad" id="login-pad"></div>
+  <div class="err" id="login-err"></div>
+</div>
+
+<!-- HOME -->
+<div class="screen" id="screen-home">
+  <div class="nav">
+    <div class="nav-logo">KF</div>
+    <div id="nav-greeting" style="flex:1;font-size:14px;color:var(--tx2)"></div>
+    <div class="avatar" id="nav-avatar"></div>
+    <button class="btn btn-ghost btn-sm" onclick="logout()" style="color:var(--tx3);font-size:12px;padding:6px 10px">Out</button>
+  </div>
+  <div class="tabs pad" style="padding-left:20px;padding-right:20px">
+    <div class="tab active" onclick="switchTab(0,this)">Today</div>
+    <div class="tab" onclick="switchTab(1,this)">Month</div>
+    <div class="tab" onclick="switchTab(2,this)">Board</div>
+    <div class="tab" onclick="switchTab(3,this)">Feed</div>
+    <div class="tab" onclick="switchTab(4,this)">Me</div>
+  </div>
+
+  <!-- TODAY -->
+  <div class="scroll-area" id="tab-today" style="padding:16px 20px 100px">
+    <div class="stats-grid">
+      <div class="stat"><div class="stat-val gold" id="st-streak">0</div><div class="stat-lbl">Day streak</div></div>
+      <div class="stat"><div class="stat-val" id="st-days">0</div><div class="stat-lbl">Days this month</div></div>
+      <div class="stat"><div class="stat-val green" id="st-pts">0</div><div class="stat-lbl">Points</div></div>
+      <div class="stat"><div class="stat-val" id="st-pct">0%</div><div class="stat-lbl">Month completion</div></div>
+    </div>
+    <div id="today-card"></div>
+    <div class="divider"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <h3>This month's workouts</h3>
+      <button class="edit-btn" id="edit-btn-today" onclick="toggleEditMode('today')">Edit</button>
+    </div>
+    <div id="workout-history"></div>
+    <div class="delete-toolbar" id="toolbar-today" style="display:none">
+      <div style="flex:1;font-size:13px;font-weight:500" id="toolbar-today-count">0 selected</div>
+      <button class="btn btn-ghost btn-sm" onclick="selectAll('today')">Select all</button>
+      <button class="btn btn-danger btn-sm" onclick="deleteSelected('today')">Delete</button>
+    </div>
+  </div>
+
+  <!-- MONTH -->
+  <div class="scroll-area" id="tab-month" style="display:none;padding:16px 20px 80px">
+    <p style="font-size:13px;color:var(--tx2);margin-bottom:12px;font-weight:500" id="cal-month-label"></p>
+    <div class="cal-header">
+      <div class="cal-dow">S</div><div class="cal-dow">M</div><div class="cal-dow">T</div>
+      <div class="cal-dow">W</div><div class="cal-dow">T</div><div class="cal-dow">F</div><div class="cal-dow">S</div>
+    </div>
+    <div class="cal-grid" id="cal-grid"></div>
+    <div style="display:flex;gap:16px;font-size:12px;color:var(--tx2);margin:12px 0 20px">
+      <span><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:var(--gold);margin-right:5px"></span>Logged</span>
+      <span><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:var(--sf2);margin-right:5px"></span>Rest day</span>
+      <span style="font-size:11px;color:var(--tx3)">Tap past days to log</span>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <h3>Workout log</h3>
+      <button class="edit-btn" id="edit-btn-month" onclick="toggleEditMode('month')">Edit</button>
+    </div>
+    <div id="month-history"></div>
+    <div class="delete-toolbar" id="toolbar-month" style="display:none">
+      <div style="flex:1;font-size:13px;font-weight:500" id="toolbar-month-count">0 selected</div>
+      <button class="btn btn-ghost btn-sm" onclick="selectAll('month')">Select all</button>
+      <button class="btn btn-danger btn-sm" onclick="deleteSelected('month')">Delete</button>
+    </div>
+  </div>
+
+  <!-- BOARD -->
+  <div class="scroll-area" id="tab-board" style="display:none;padding:16px 20px 80px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+      <h3 id="board-month-lbl"></h3>
+      <span style="font-size:11px;color:var(--tx3)">pts = days + streak×2</span>
+    </div>
+    <!-- H2H selector -->
+    <div class="card" style="margin-bottom:12px">
+      <p style="font-size:12px;color:var(--tx2);margin-bottom:8px;font-weight:500">HEAD-TO-HEAD</p>
+      <select id="h2h-select" onchange="renderH2H()" style="margin-bottom:0"><option value="">Compare with someone...</option></select>
+      <div id="h2h-result" style="margin-top:10px;display:none"></div>
+    </div>
+    <div class="card" style="padding:0 16px" id="board-list"></div>
+    <!-- Winners archive -->
+    <div style="margin-top:20px">
+      <h3 style="margin-bottom:10px">Monthly Champions</h3>
+      <div id="winners-list"></div>
+    </div>
+  </div>
+
+  <!-- FEED -->
+  <div class="scroll-area" id="tab-feed" style="display:none;padding:16px 20px 80px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+      <h3>Community feed</h3>
+      <span style="font-size:11px;color:var(--tx3)">Last 7 days</span>
+    </div>
+    <div id="feed-list"></div>
+  </div>
+
+  <!-- ME -->
+  <div class="scroll-area" id="tab-me" style="display:none;padding:16px 20px 80px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+      <div class="avatar" style="width:48px;height:48px;font-size:18px" id="me-avatar"></div>
+      <div><div style="font-size:18px;font-weight:600" id="me-name"></div><div style="font-size:12px;color:var(--tx2)" id="me-joined"></div></div>
+    </div>
+    <!-- Personal records -->
+    <h3 style="margin-bottom:10px">Personal Records</h3>
+    <div class="stats-grid" id="me-records"></div>
+    <!-- Badges -->
+    <h3 style="margin-top:4px;margin-bottom:10px">Badges</h3>
+    <div class="badge-grid" id="me-badges"></div>
+    <!-- Admin section -->
+    <div id="admin-section" style="display:none;margin-top:24px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <h3>Admin Controls</h3>
+        <span style="font-size:11px;color:var(--gold)">👑 Admin</span>
+      </div>
+      <div class="seg" id="admin-seg">
+        <div class="seg-btn active" onclick="showAdminTab('users',this)">Users</div>
+        <div class="seg-btn" onclick="showAdminTab('invites',this)">Invites</div>
+        <div class="seg-btn" onclick="showAdminTab('settings',this)">Settings</div>
+        <div class="seg-btn" onclick="showAdminTab('winners',this)">Champions</div>
+      </div>
+      <div id="admin-users"></div>
+      <div id="admin-invites" style="display:none"></div>
+      <div id="admin-settings" style="display:none"></div>
+      <div id="admin-winners" style="display:none"></div>
+    </div>
+  </div>
+</div>
+
+<!-- LOG MODAL -->
+<div class="modal-wrap" id="log-modal" style="display:none" onclick="closeModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <h2 style="margin-bottom:4px" id="log-modal-title">Log workout</h2>
+    <p class="muted" style="margin-bottom:20px;font-size:13px" id="log-modal-sub">Minimum 30 minutes of physical activity</p>
+    <div class="field">
+      <label>Activity type</label>
+      <select id="log-activity">
+        <option value="">Select activity...</option>
+        <option>Running / Jogging</option><option>Walking (brisk)</option><option>Cycling</option>
+        <option>Swimming</option><option>Weight training</option><option>HIIT / Circuit training</option>
+        <option>Basketball</option><option>Football / Soccer</option><option>Tennis / Racket sports</option>
+        <option>Yoga / Pilates</option><option>Jump rope</option><option>Martial arts / Boxing</option>
+        <option>Dance / Zumba</option><option>Rowing</option><option>Hiking</option>
+        <option>CrossFit</option><option>Other</option>
+      </select>
+    </div>
+    <div class="field"><label>Duration (minutes)</label><input type="number" id="log-duration" min="30" max="480" placeholder="e.g. 45" inputmode="numeric"></div>
+    <div class="field"><label>Notes (optional)</label><textarea id="log-notes" placeholder="e.g. 3 mile run, felt strong..."></textarea></div>
+    <div class="err" id="log-err"></div>
+    <button class="btn btn-gold" onclick="submitWorkout()">Log it</button>
+    <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+  </div>
+</div>
+
+<!-- BADGE TOAST -->
+<div id="badge-toast" style="position:fixed;top:20px;left:50%;transform:translateX(-50%);background:var(--sf);border:1px solid var(--gb);border-radius:var(--r);padding:12px 20px;display:none;z-index:200;text-align:center;min-width:200px">
+  <div id="badge-toast-content"></div>
+</div>
+
+<!-- FAB -->
+<button id="fab" onclick="openModal()" style="display:none;position:fixed;bottom:28px;right:24px;width:56px;height:56px;border-radius:50%;background:var(--gold);border:none;cursor:pointer;box-shadow:0 4px 20px rgba(201,168,76,.35);z-index:50;align-items:center;justify-content:center">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+</button>
+
+<script>
+const API='';
+var user=null,workoutsCache=[],editMode={today:false,month:false},selected={today:new Set(),month:new Set()};
+var logDateOverride=null,allUsers=[];
+
+function buildPad(padId,bufKey){
+  var buf=[];
+  var pad=document.getElementById(padId);
+  ['1','2','3','4','5','6','7','8','9','','0','⌫'].forEach(function(k){
+    var d=document.createElement('div');
+    d.className='pk'+(k===''?' pk-empty':k==='⌫'?' pk-del':'');
+    d.textContent=k;
+    if(k!=='')d.onclick=function(){
+      if(k==='⌫')buf.pop();
+      else if(buf.length<4)buf.push(k);
+      document.querySelectorAll('#'+(bufKey==='reg'?'reg':'login')+'-dots .pin-dot').forEach(function(d,i){d.classList.toggle('filled',i<buf.length)});
+      if(bufKey==='login'&&buf.length===4)setTimeout(function(){doLogin(buf.join(''))},180);
+    };
+    pad.appendChild(d);
+  });
+  return buf;
+}
+var regBuf=buildPad('reg-pad','reg');
+var loginBuf=buildPad('login-pad','login');
+
+function show(id){document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active')});document.getElementById(id).classList.add('active')}
+
+function switchTab(idx,el){
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active')});el.classList.add('active');
+  ['tab-today','tab-month','tab-board','tab-feed','tab-me'].forEach(function(t,i){document.getElementById(t).style.display=i===idx?'block':'none'});
+  if(idx===1)renderCalendar();
+  if(idx===2)renderBoard();
+  if(idx===3)renderFeed();
+  if(idx===4)renderMe();
+}
+
+async function doRegister(){
+  var name=document.getElementById('reg-name').value.trim();
+  var pin=regBuf.join('');
+  var invite=document.getElementById('reg-invite').value.trim();
+  var err=document.getElementById('reg-err');
+  err.textContent='';
+  if(!name){err.textContent='Enter a name';return}
+  if(pin.length!==4){err.textContent='Enter a 4-digit PIN';return}
+  try{
+    var r=await fetch(API+'/api/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,pin,invite_code:invite})});
+    var d=await r.json();
+    if(!r.ok){err.textContent=d.error;return}
+    user=d;regBuf.length=0;enterApp();
+  }catch(e){err.textContent='Connection error'}
+}
+
+async function doLogin(pin){
+  var name=document.getElementById('login-name').value.trim();
+  var err=document.getElementById('login-err');err.textContent='';
+  try{
+    var r=await fetch(API+'/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,pin})});
+    var d=await r.json();
+    if(!r.ok){err.textContent=d.error;loginBuf.length=0;document.querySelectorAll('#login-dots .pin-dot').forEach(function(d){d.classList.remove('filled')});return}
+    user=d;loginBuf.length=0;enterApp();
+  }catch(e){err.textContent='Connection error'}
+}
+
+function logout(){
+  user=null;workoutsCache=[];
+  document.getElementById('fab').style.display='none';
+  document.getElementById('login-name').value='';
+  loginBuf.length=0;document.querySelectorAll('#login-dots .pin-dot').forEach(function(d){d.classList.remove('filled')});
+  show('screen-welcome');
+}
+
+function enterApp(){
+  show('screen-home');
+  document.getElementById('fab').style.display='flex';
+  document.getElementById('nav-avatar').textContent=user.name.split(' ').map(function(w){return w[0]}).join('').slice(0,2).toUpperCase();
+  document.getElementById('me-avatar').textContent=user.name.split(' ').map(function(w){return w[0]}).join('').slice(0,2).toUpperCase();
+  document.getElementById('me-name').textContent=user.name;
+  var hr=new Date().getHours();
+  document.getElementById('nav-greeting').textContent=(hr<12?'Morning':hr<17?'Afternoon':'Evening')+', '+user.name.split(' ')[0];
+  if(user.is_admin)document.getElementById('admin-section').style.display='block';
+  loadData();
+  loadAllUsers();
+}
+
+async function loadAllUsers(){
+  try{var r=await fetch(API+'/api/leaderboard');allUsers=await r.json();}catch(e){}
+  var sel=document.getElementById('h2h-select');
+  sel.innerHTML='<option value="">Compare with someone...</option>';
+  allUsers.forEach(function(u){if(u.id!==user.id){var o=document.createElement('option');o.value=u.id;o.textContent=u.name;sel.appendChild(o)}});
+}
+
+async function loadData(){
+  var now=new Date();
+  var month=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
+  try{var r=await fetch(API+'/api/workouts/'+user.id+'?month='+month);workoutsCache=await r.json();}catch(e){workoutsCache=[]}
+  renderToday();
+}
+
+function todayStr(){var n=new Date();return n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0')}
+
+function calcStreak(){
+  if(!workoutsCache.length)return 0;
+  var dates=new Set(workoutsCache.map(function(w){return(w.log_date+'').slice(0,10)}));
+  var streak=0,d=new Date();
+  while(true){var k=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');if(dates.has(k)){streak++;d.setDate(d.getDate()-1)}else break}
+  return streak;
+}
+
+function renderToday(){
+  var today=todayStr();
+  var todayW=workoutsCache.find(function(w){return(w.log_date+'').slice(0,10)===today});
+  var streak=calcStreak();var days=workoutsCache.length;var pts=days+streak*2;
+  var now=new Date();var pct=Math.round(days/now.getDate()*100);
+  document.getElementById('st-streak').textContent=streak;
+  document.getElementById('st-days').textContent=days;
+  document.getElementById('st-pts').textContent=pts;
+  document.getElementById('st-pct').textContent=pct+'%';
+  var tc=document.getElementById('today-card');
+  if(todayW){
+    tc.innerHTML='<div class="card card-green"><div class="row" style="margin-bottom:8px"><div class="pill pill-green"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Logged</div></div><div style="font-size:18px;font-weight:600;margin-bottom:2px">'+todayW.activity+'</div><div class="muted" style="font-size:13px">'+todayW.duration_minutes+' min'+(todayW.notes?' · '+todayW.notes:'')+'</div></div>';
+  }else{
+    tc.innerHTML='<button class="btn btn-green" onclick="openModal(null)" style="margin-bottom:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Log today\'s workout</button>';
+  }
+  renderWorkoutHistory();
+}
+
+function workoutItemHTML(w,tab){
+  var months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var dateStr=(w.log_date+'').slice(0,10);
+  var d=new Date(dateStr+'T12:00:00');
+  var label=months[d.getMonth()]+' '+d.getDate();
+  var isSel=selected[tab].has(dateStr);
+  var left=editMode[tab]
+    ?'<div class="workout-cb'+(isSel?' checked':'')+'" onclick="event.stopPropagation();toggleSel(\''+tab+'\',\''+dateStr+'\')"><svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="#0a0a0a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"'+(isSel?'':' style="display:none"')+'><polyline points="2 6 5 9 10 3"/></svg></div>'
+    :'<div class="workout-dot" style="margin-top:6px"></div>';
+  return '<div class="workout-item'+(isSel?' selected':'')+'" data-date="'+dateStr+'" data-tab="'+tab+'" onclick="'+(editMode[tab]?'toggleSel(\''+tab+'\',\''+dateStr+'\')':'')+'">'
+    +left+'<div class="workout-info"><div class="workout-act">'+w.activity+'</div><div class="workout-meta">'+label+' · '+w.duration_minutes+' min'+(w.notes?' · '+w.notes:'')+'</div></div></div>';
+}
+
+function renderWorkoutHistory(){
+  var hist=document.getElementById('workout-history');
+  if(!workoutsCache.length){hist.innerHTML='<p class="muted" style="font-size:13px;padding:8px 0">No workouts logged yet this month.</p>';return}
+  hist.innerHTML=workoutsCache.map(function(w){return workoutItemHTML(w,'today')}).join('');
+}
+
+function renderMonthHistory(){
+  var mh=document.getElementById('month-history');
+  if(!workoutsCache.length){mh.innerHTML='<p class="muted" style="font-size:13px;padding:8px 0">No workouts this month.</p>';return}
+  mh.innerHTML=workoutsCache.map(function(w){return workoutItemHTML(w,'month')}).join('');
+}
+
+function toggleEditMode(tab){
+  editMode[tab]=!editMode[tab];selected[tab].clear();
+  document.getElementById('edit-btn-'+tab).textContent=editMode[tab]?'Done':'Edit';
+  document.getElementById('toolbar-'+tab).style.display=editMode[tab]?'flex':'none';
+  if(tab==='today')renderWorkoutHistory();else renderMonthHistory();
+}
+
+function toggleSel(tab,dateStr){
+  if(selected[tab].has(dateStr))selected[tab].delete(dateStr);else selected[tab].add(dateStr);
+  document.getElementById('toolbar-'+tab+'-count').textContent=selected[tab].size+' selected';
+  var item=document.querySelector('[data-date="'+dateStr+'"][data-tab="'+tab+'"]');
+  if(item){item.classList.toggle('selected',selected[tab].has(dateStr));var cb=item.querySelector('.workout-cb');if(cb){cb.classList.toggle('checked',selected[tab].has(dateStr));cb.querySelector('svg').style.display=selected[tab].has(dateStr)?'':'none'}}
+}
+
+function selectAll(tab){
+  var items=document.querySelectorAll('[data-tab="'+tab+'"]');
+  var allSel=selected[tab].size===items.length;selected[tab].clear();
+  if(!allSel)items.forEach(function(el){selected[tab].add(el.dataset.date)});
+  document.getElementById('toolbar-'+tab+'-count').textContent=selected[tab].size+' selected';
+  items.forEach(function(el){el.classList.toggle('selected',selected[tab].has(el.dataset.date));var cb=el.querySelector('.workout-cb');if(cb){cb.classList.toggle('checked',selected[tab].has(el.dataset.date));cb.querySelector('svg').style.display=selected[tab].has(el.dataset.date)?'':'none'}});
+}
+
+async function deleteSelected(tab){
+  if(!selected[tab].size)return;
+  var count=selected[tab].size;
+  if(!confirm('Delete '+count+' workout'+(count>1?'s':'')+' ? This cannot be undone.'))return;
+  for(var d of Array.from(selected[tab]))await fetch(API+'/api/workouts/'+user.id+'/'+d,{method:'DELETE'});
+  editMode[tab]=false;selected[tab].clear();
+  document.getElementById('edit-btn-'+tab).textContent='Edit';
+  document.getElementById('toolbar-'+tab).style.display='none';
+  await loadData();if(tab==='month')renderCalendar();
+}
+
+// Calendar
+function renderCalendar(){
+  var now=new Date();
+  var months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('cal-month-label').textContent=months[now.getMonth()]+' '+now.getFullYear();
+  var dates=new Set(workoutsCache.map(function(w){return(w.log_date+'').slice(0,10)}));
+  var first=new Date(now.getFullYear(),now.getMonth(),1).getDay();
+  var total=new Date(now.getFullYear(),now.getMonth()+1,0).getDate();
+  var grid=document.getElementById('cal-grid');grid.innerHTML='';
+  for(var i=0;i<first;i++){var e=document.createElement('div');e.className='cal-day empty';grid.appendChild(e)}
+  for(var day=1;day<=total;day++){
+    var k=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(day).padStart(2,'0');
+    var el=document.createElement('div');
+    var cls='cal-day';
+    if(dates.has(k))cls+=' active';
+    if(day===now.getDate())cls+=' today';
+    if(day>now.getDate())cls+=' future';
+    var isFuture=day>now.getDate();
+    var daysBack=(now.getDate()-day);
+    if(!isFuture&&!dates.has(k)&&daysBack<=7&&daysBack>0)cls+=' past-unlogged';
+    el.className=cls;el.textContent=day;
+    if(!isFuture&&!dates.has(k)&&daysBack<=7){(function(kk){el.onclick=function(){openModal(kk)}})(k)}
+    else if(!isFuture&&dates.has(k)){el.title='Logged'}
+    grid.appendChild(el);
+  }
+  renderMonthHistory();
+}
+
+// Leaderboard
+async function renderBoard(){
+  var now=new Date();
+  var month=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
+  var months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('board-month-lbl').textContent=months[now.getMonth()]+' '+now.getFullYear();
+  var list=document.getElementById('board-list');
+  try{
+    var r=await fetch(API+'/api/leaderboard?month='+month);
+    var board=await r.json();
+    allUsers=board;
+    var sel=document.getElementById('h2h-select');
+    sel.innerHTML='<option value="">Compare with someone...</option>';
+    board.forEach(function(u){if(u.id!==user.id){var o=document.createElement('option');o.value=u.id;o.textContent=u.name;sel.appendChild(o)}});
+    if(!board.length){list.innerHTML='<p class="muted" style="padding:16px 0;text-align:center;font-size:13px">No participants yet</p>';return}
+    var rc=['gold-rank','silver-rank','bronze-rank'];
+    list.innerHTML=board.map(function(p,i){
+      var isMe=p.id===user.id;
+      var topBadges=p.badges.slice(0,2).map(function(k){return BADGE_MAP[k]?BADGE_MAP[k].emoji:''}).join('');
+      return '<div class="board-row'+(isMe?' me':'')+'">'
+        +'<div class="rank-badge '+(i<3?rc[i]:'')+'">'+(i<3?i+1+'':i+1)+'</div>'
+        +'<div style="flex:1"><div style="font-size:14px;font-weight:500">'+p.name+(isMe?' <span style="font-size:11px;color:var(--tx2)">(you)</span>':'')+(p.streak>1?'<span class="streak-badge">'+p.streak+'🔥</span>':'')+(topBadges?' <span style="font-size:13px">'+topBadges+'</span>':'')+'</div>'
+        +'<div style="font-size:11px;color:var(--tx2);margin-top:1px">'+p.totalDays+' day'+(p.totalDays!==1?'s':'')+' this month</div></div>'
+        +'<div style="text-align:right"><div class="board-pts-val">'+p.points+'</div><div class="board-pts-lbl">pts</div></div></div>';
+    }).join('');
+  }catch(e){list.innerHTML='<p class="muted" style="padding:16px 0;text-align:center;font-size:13px">Could not load</p>'}
+  // Winners
+  try{
+    var wr=await fetch(API+'/api/winners');var winners=await wr.json();
+    var wl=document.getElementById('winners-list');
+    if(!winners.length){wl.innerHTML='<p class="muted" style="font-size:13px">No past champions yet.</p>';return}
+    var mnames=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    wl.innerHTML=winners.map(function(w){
+      var parts=w.month.split('-');var mLabel=mnames[parseInt(parts[1])-1]+' '+parts[0];
+      return '<div class="winner-card"><span style="font-size:24px">👑</span><div><div style="font-weight:600">'+w.winner_name+'</div><div style="font-size:12px;color:var(--tx2)">'+mLabel+' · '+w.points+' pts · '+w.total_days+' days · '+w.streak+' streak</div></div></div>';
+    }).join('');
+  }catch(e){}
+}
+
+async function renderH2H(){
+  var uid2=parseInt(document.getElementById('h2h-select').value);
+  var res=document.getElementById('h2h-result');
+  if(!uid2){res.style.display='none';return}
+  var now=new Date();var month=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
+  try{
+    var r=await fetch(API+'/api/h2h?u1='+user.id+'&u2='+uid2+'&month='+month);
+    var d=await r.json();
+    var me=d[user.id],them=d[uid2];
+    var total=me.points+them.points||1;
+    var myPct=Math.round(me.points/total*100);
+    res.style.display='block';
+    res.innerHTML='<div style="display:flex;justify-content:space-between;font-size:12px;font-weight:600;margin-bottom:4px"><span style="color:var(--gold)">'+me.name+'</span><span>'+them.name+'</span></div>'
+      +'<div class="h2h-bar"><div class="h2h-fill" style="width:'+myPct+'%"></div></div>'
+      +'<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--tx2)"><span>'+me.points+' pts · '+me.days+' days · '+me.streak+' streak</span><span>'+them.points+' pts · '+them.days+' days · '+them.streak+' streak</span></div>';
+  }catch(e){}
+}
+
+// Feed
+var EMOJIS=['🔥','💪','👑','⚡','🎯'];
+async function renderFeed(){
+  var list=document.getElementById('feed-list');
+  list.innerHTML='<p class="muted" style="font-size:13px;padding:8px 0">Loading...</p>';
+  try{
+    var r=await fetch(API+'/api/feed');var items=await r.json();
+    if(!items.length){list.innerHTML='<p class="muted" style="font-size:13px;padding:8px 0">No activity in the last 7 days.</p>';return}
+    var months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    list.innerHTML=items.map(function(w){
+      var d=new Date((w.log_date+'').slice(0,10)+'T12:00:00');
+      var label=months[d.getMonth()]+' '+d.getDate();
+      var isMe=w.user_id===user.id;
+      var reactions=typeof w.reactions==='string'?JSON.parse(w.reactions):w.reactions||[];
+      var myReaction=reactions.find(function(r){return r.user_id===user.id});
+      var emojiCounts={};reactions.forEach(function(r){emojiCounts[r.emoji]=(emojiCounts[r.emoji]||0)+1});
+      var reactionHtml=EMOJIS.map(function(e){
+        var count=emojiCounts[e]||0;var active=myReaction&&myReaction.emoji===e;
+        return '<button class="reaction-btn'+(active?' reacted':'')+'" onclick="toggleReaction('+w.id+',\''+e+'\')">'
+          +e+(count?' '+count:'')+'</button>';
+      }).join('');
+      return '<div class="feed-item" id="feed-'+w.id+'">'
+        +'<div class="row" style="margin-bottom:4px"><span class="feed-name">'+w.user_name+(isMe?' <span style="font-size:11px;color:var(--tx2)">(you)</span>':'')+' · </span><span class="feed-meta">'+label+'</span></div>'
+        +'<div class="feed-act">'+w.activity+'</div>'
+        +'<div class="feed-meta">'+w.duration_minutes+' min'+(w.notes?' · '+w.notes:'')+'</div>'
+        +'<div class="reaction-bar">'+reactionHtml+'</div></div>';
+    }).join('');
+  }catch(e){list.innerHTML='<p class="muted" style="font-size:13px;padding:8px 0">Could not load feed.</p>'}
+}
+
+async function toggleReaction(workoutId,emoji){
+  try{
+    await fetch(API+'/api/reactions',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({workout_id:workoutId,user_id:user.id,emoji:emoji})});
+    renderFeed();
+  }catch(e){}
+}
+
+var BADGE_MAP={first_workout:{label:'First Step',emoji:'👟'},streak_7:{label:'Week Warrior',emoji:'🔥'},streak_14:{label:'Fortnight Fire',emoji:'⚡'},streak_30:{label:'Month on Fire',emoji:'🌋'},perfect_month:{label:'Perfect Month',emoji:'👑'},comeback:{label:'Comeback Kid',emoji:'💪'},days_10:{label:'Double Digits',emoji:'🎯'},days_20:{label:'Grinder',emoji:'⚙️'},variety_5:{label:'Well Rounded',emoji:'🎨'},early_bird:{label:'Kingdom Builder',emoji:'✝️'}};
+
+async function renderMe(){
+  // Records
+  try{
+    var r=await fetch(API+'/api/records/'+user.id);var rec=await r.json();
+    var mnames=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var bm='—';if(rec.best_month){var bp=rec.best_month.split('-');bm=mnames[parseInt(bp[1])-1]+' ('+rec.best_month_days+' days)'}
+    document.getElementById('me-records').innerHTML=
+      '<div class="stat"><div class="stat-val gold">'+rec.longest_streak+'</div><div class="stat-lbl">Longest streak</div></div>'
+      +'<div class="stat"><div class="stat-val">'+rec.total_workouts+'</div><div class="stat-lbl">Total workouts</div></div>'
+      +'<div class="stat" style="grid-column:span 2"><div style="font-size:13px;color:var(--tx2);margin-bottom:2px">Best month</div><div style="font-size:15px;font-weight:500">'+bm+'</div><div style="font-size:12px;color:var(--tx2);margin-top:2px">Fav: '+(rec.favorite_activity||'—')+'</div></div>';
+  }catch(e){}
+  // Badges
+  try{
+    var br=await fetch(API+'/api/badges/'+user.id);var badges=await br.json();
+    var earnedKeys=new Set(badges.map(function(b){return b.key}));
+    document.getElementById('me-badges').innerHTML=Object.keys(BADGE_MAP).map(function(k){
+      var b=BADGE_MAP[k];var earned=earnedKeys.has(k);
+      return '<div class="badge-item'+(earned?' earned':'')+'" title="'+(earned?'Earned!':'Not yet earned')+'"><div class="badge-emoji">'+(earned?b.emoji:'🔒')+'</div><div class="badge-label">'+b.label+'</div></div>';
+    }).join('');
+  }catch(e){}
+  // Admin
+  if(user.is_admin)showAdminTab('users',document.querySelector('#admin-seg .seg-btn'));
+}
+
+function showAdminTab(tab,el){
+  document.querySelectorAll('#admin-seg .seg-btn').forEach(function(b){b.classList.remove('active')});el.classList.add('active');
+  ['admin-users','admin-invites','admin-settings','admin-winners'].forEach(function(id){document.getElementById(id).style.display='none'});
+  document.getElementById('admin-'+tab).style.display='block';
+  if(tab==='users')loadAdminUsers();
+  if(tab==='invites')loadAdminInvites();
+  if(tab==='settings')loadAdminSettings();
+  if(tab==='winners')loadAdminWinners();
+}
+
+async function loadAdminUsers(){
+  var el=document.getElementById('admin-users');
+  try{
+    var r=await fetch(API+'/api/admin/users');var users=await r.json();
+    el.innerHTML=users.map(function(u){
+      var last=u.last_workout?(u.last_workout+'').slice(0,10):'Never';
+      return '<div class="admin-user-row"><div style="flex:1"><div style="font-size:13px;font-weight:500">'+u.name+'</div><div style="font-size:11px;color:var(--tx2)">'+u.total_workouts+' workouts · Last: '+last+'</div></div>'
+        +'<button class="btn btn-ghost btn-sm" style="color:var(--gold);margin-bottom:0" onclick="adminResetPin('+u.id+',\''+u.name+'\')">PIN</button>'
+        +(u.id!==user.id?'<button class="btn btn-danger btn-sm" onclick="adminDeleteUser('+u.id+',\''+u.name+'\')" style="margin-bottom:0">✕</button>':'')
+        +'</div>';
+    }).join('');
+  }catch(e){el.innerHTML='<p class="muted" style="font-size:13px">Could not load</p>'}
+}
+
+async function adminDeleteUser(uid,name){
+  if(!confirm('Remove '+name+' and all their data? This cannot be undone.'))return;
+  await fetch(API+'/api/admin/users/'+uid,{method:'DELETE'});loadAdminUsers();renderBoard();
+}
+
+async function adminResetPin(uid,name){
+  var pin=prompt('Enter new 4-digit PIN for '+name+':');
+  if(!pin||pin.length!==4||!/^\d{4}$/.test(pin)){alert('PIN must be exactly 4 digits');return}
+  await fetch(API+'/api/admin/reset-pin',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({user_id:uid,new_pin:pin})});
+  alert('PIN updated for '+name);
+}
+
+async function loadAdminInvites(){
+  var el=document.getElementById('admin-invites');
+  el.innerHTML='<button class="btn btn-gold" onclick="createInvite()" style="margin-bottom:12px">Generate invite code</button>';
+  try{
+    var r=await fetch(API+'/api/invites');var codes=await r.json();
+    if(!codes.length){el.innerHTML+='<p class="muted" style="font-size:13px">No invite codes yet.</p>';return}
+    el.innerHTML+=codes.map(function(c){
+      var used=c.used_by_name?'Used by '+c.used_by_name:'Available';
+      return '<div class="invite-code"><span>'+c.code+'</span><div style="display:flex;gap:8px;align-items:center"><span style="font-size:11px;color:'+(c.used_by_name?'var(--tx3)':'var(--gr)')+'">'+used+'</span><button class="copy-btn" onclick="copyCode(\''+c.code+'\')">Copy</button></div></div>';
+    }).join('');
+  }catch(e){}
+}
+
+async function createInvite(){
+  var r=await fetch(API+'/api/invites',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({user_id:user.id})});
+  var d=await r.json();
+  navigator.clipboard.writeText(d.code).catch(function(){});
+  loadAdminInvites();
+}
+
+function copyCode(code){
+  navigator.clipboard.writeText(code).then(function(){alert('Copied: '+code)}).catch(function(){alert('Code: '+code)});
+}
+
+async function loadAdminSettings(){
+  var el=document.getElementById('admin-settings');
+  el.innerHTML='<div class="field"><label>Invite-only mode</label><div style="display:flex;align-items:center;gap:12px"><input type="checkbox" id="invite-only-toggle" style="width:auto;padding:0" onchange="saveSettings()"><span class="muted" style="font-size:13px">Require invite code to join</span></div></div>';
+}
+
+async function saveSettings(){
+  var invOnly=document.getElementById('invite-only-toggle').checked;
+  await fetch(API+'/api/admin/settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({invite_only:invOnly?'true':'false'})});
+}
+
+async function loadAdminWinners(){
+  var el=document.getElementById('admin-winners');
+  var now=new Date();
+  var month=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
+  var months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  el.innerHTML='<p class="muted" style="font-size:13px;margin-bottom:12px">Record this month\'s champion:</p>';
+  try{
+    var r=await fetch(API+'/api/leaderboard?month='+month);var board=await r.json();
+    if(board.length){
+      var leader=board[0];
+      el.innerHTML+='<div class="card card-gold" style="margin-bottom:12px"><div style="font-size:12px;color:var(--tx2);margin-bottom:4px">Current leader — '+months[now.getMonth()]+'</div><div style="font-size:16px;font-weight:600">'+leader.name+'</div><div style="font-size:12px;color:var(--tx2)">'+leader.points+' pts · '+leader.totalDays+' days · '+leader.streak+' streak</div><button class="btn btn-gold" onclick="recordWinner('+JSON.stringify(leader).replace(/"/g,\'&quot;\')+')" style="margin-top:10px;margin-bottom:0;font-size:13px;padding:10px">👑 Crown '+leader.name+' as champion</button></div>';
+    }
+  }catch(e){}
+}
+
+async function recordWinner(leader){
+  var now=new Date();var month=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
+  if(!confirm('Crown '+leader.name+' as '+month+' champion?'))return;
+  await fetch(API+'/api/winners',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({month:month,winner_name:leader.name,points:leader.points,total_days:leader.totalDays,streak:leader.streak})});
+  alert('👑 '+leader.name+' crowned as champion!');loadAdminWinners();
+}
+
+// Log modal
+var logDateTarget=null;
+function openModal(dateOverride){
+  logDateTarget=dateOverride||null;
+  document.getElementById('log-modal').style.display='flex';
+  document.getElementById('log-err').textContent='';
+  document.getElementById('log-activity').value='';
+  document.getElementById('log-duration').value='';
+  document.getElementById('log-notes').value='';
+  if(dateOverride){
+    var d=new Date(dateOverride+'T12:00:00');
+    var months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    document.getElementById('log-modal-title').textContent='Log workout';
+    document.getElementById('log-modal-sub').textContent='Logging for '+months[d.getMonth()]+' '+d.getDate();
+  }else{
+    document.getElementById('log-modal-title').textContent='Log workout';
+    document.getElementById('log-modal-sub').textContent='Minimum 30 minutes of physical activity';
+  }
+}
+
+function closeModal(e){if(!e||e.target===document.getElementById('log-modal'))document.getElementById('log-modal').style.display='none'}
+
+async function submitWorkout(){
+  var activity=document.getElementById('log-activity').value;
+  var duration=parseInt(document.getElementById('log-duration').value);
+  var notes=document.getElementById('log-notes').value.trim();
+  var err=document.getElementById('log-err');
+  if(!activity){err.textContent='Select an activity';return}
+  if(!duration||duration<30){err.textContent='Minimum 30 minutes';return}
+  var logDate=logDateTarget||todayStr();
+  try{
+    var r=await fetch(API+'/api/workouts',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({user_id:user.id,log_date:logDate,activity,duration_minutes:duration,notes})});
+    var d=await r.json();
+    if(!r.ok){err.textContent=d.error;return}
+    closeModal();
+    if(d.new_badges&&d.new_badges.length)showBadgeToast(d.new_badges);
+    await loadData();renderCalendar();
+  }catch(e){err.textContent='Connection error'}
+}
+
+function showBadgeToast(keys){
+  var toast=document.getElementById('badge-toast');
+  var content=document.getElementById('badge-toast-content');
+  content.innerHTML=keys.map(function(k){var b=BADGE_MAP[k];return b?'<div style="font-size:22px">'+b.emoji+'</div><div style="font-size:14px;font-weight:600;color:var(--gold)">'+b.label+'</div><div style="font-size:12px;color:var(--tx2)">Badge unlocked!</div>':''}).join('');
+  toast.style.display='block';
+  setTimeout(function(){toast.style.display='none'},3500);
+}
+</script>
+</body>
+</html>
