@@ -224,9 +224,9 @@ def get_workouts(user_id):
     month=request.args.get('month')
     conn=get_db(); cur=conn.cursor()
     if month:
-        cur.execute("SELECT * FROM workouts WHERE user_id=%s AND TO_CHAR(log_date,'YYYY-MM')=%s ORDER BY log_date DESC",(user_id,month))
+        cur.execute("SELECT id, user_id, TO_CHAR(log_date,'YYYY-MM-DD') as log_date, activity, duration_minutes, notes FROM workouts WHERE user_id=%s AND TO_CHAR(log_date,'YYYY-MM')=%s ORDER BY log_date DESC",(user_id,month))
     else:
-        cur.execute('SELECT * FROM workouts WHERE user_id=%s ORDER BY log_date DESC',(user_id,))
+        cur.execute("SELECT id, user_id, TO_CHAR(log_date,'YYYY-MM-DD') as log_date, activity, duration_minutes, notes FROM workouts WHERE user_id=%s ORDER BY log_date DESC",(user_id,))
     rows=cur.fetchall(); cur.close(); conn.close()
     return jsonify([dict(r) for r in rows])
 
