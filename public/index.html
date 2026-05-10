@@ -270,6 +270,21 @@ textarea{resize:none;height:72px}
     <!-- Badges -->
     <h3 style="margin-top:4px;margin-bottom:10px">Badges</h3>
     <div class="badge-grid" id="me-badges"></div>
+    <!-- Account settings -->
+    <div style="margin-top:24px">
+      <h3 style="margin-bottom:10px">Account Settings</h3>
+      <div class="card">
+        <div class="field"><label>Change display name</label><input type="text" id="change-name-input" placeholder="New name" autocomplete="off"></div>
+        <button class="btn btn-gold" onclick="changeName()" style="margin-bottom:8px;font-size:13px;padding:10px">Update name</button>
+        <div class="divider"></div>
+        <p style="font-size:12px;color:var(--tx2);margin-bottom:8px">Change PIN — enter your new 4-digit PIN</p>
+        <div style="display:flex;gap:8px;margin-bottom:8px" id="change-pin-dots">
+          <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
+        </div>
+        <div class="pinpad" id="change-pin-pad" style="padding:0"></div>
+        <div class="err" id="change-err"></div>
+      </div>
+    </div>
     <!-- Admin section -->
     <div id="admin-section" style="display:none;margin-top:24px">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
@@ -408,7 +423,7 @@ function enterApp(){
   document.getElementById('me-avatar').textContent=user.name.split(' ').map(function(w){return w[0]}).join('').slice(0,2).toUpperCase();
   document.getElementById('me-name').textContent=user.name;
   var hr=new Date().getHours();
-  document.getElementById('nav-greeting').textContent=(hr<12?'Morning':hr<17?'Afternoon':'Evening')+', '+user.name.split(' ')[0];
+  document.getElementById('nav-greeting').textContent=(hr<12?'Morning':hr<17?'Afternoon':'Evening')+', '+user.name+' 👋';
   if(user.is_admin)document.getElementById('admin-section').style.display='block';
   loadData();
   loadAllUsers();
@@ -560,7 +575,7 @@ async function renderBoard(){
     var pb=document.getElementById('prize-banner');
     if(pd.prize){
       pb.style.display='block';
-      pb.innerHTML='<div style="background:var(--gd);border:1px solid var(--gb);border-radius:var(--r);padding:14px 16px;display:flex;align-items:center;gap:12px"><span style="font-size:24px">🏆</span><div><div style="font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);margin-bottom:2px">This month's prize</div><div style="font-size:16px;font-weight:600">'+pd.prize+'</div></div></div>';
+      pb.innerHTML='<div style="background:var(--gd);border:1px solid var(--gb);border-radius:var(--r);padding:14px 16px;display:flex;align-items:center;gap:12px"><span style="font-size:24px">🏆</span><div><div style="font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);margin-bottom:2px">This month&#39;s prize</div><div style="font-size:16px;font-weight:600">'+pd.prize+'</div></div></div>';
     }else{pb.style.display='none';}
   }catch(e){}
   var list=document.getElementById('board-list');
@@ -682,6 +697,9 @@ async function renderMe(){
       return '<div class="badge-item'+(earned?' earned':'')+'" title="'+(earned?'Earned!':'Not yet earned')+'"><div class="badge-emoji">'+(earned?b.emoji:'🔒')+'</div><div class="badge-label">'+b.label+'</div></div>';
     }).join('');
   }catch(e){}
+  buildChangePinPad();
+  document.getElementById('change-name-input').value='';
+  document.getElementById('change-err').textContent='';
   // Admin
   if(user.is_admin)showAdminTab('users',document.querySelector('#admin-seg .seg-btn'));
 }
@@ -826,6 +844,58 @@ async function submitWorkout(){
     closeModal();
     if(d.new_badges&&d.new_badges.length)showBadgeToast(d.new_badges);
     await loadData();renderCalendar();
+  }catch(e){err.textContent='Connection error'}
+}
+
+var changePinBuf=[];
+function buildChangePinPad(){
+  var pad=document.getElementById('change-pin-pad');
+  if(!pad||pad.children.length>0)return;
+  ['1','2','3','4','5','6','7','8','9','','0','⌫'].forEach(function(k){
+    var d=document.createElement('div');
+    d.className='pk'+(k===''?' pk-empty':k==='⌫'?' pk-del':'');
+    d.textContent=k;
+    if(k!=='')d.onclick=function(){
+      if(k==='⌫')changePinBuf.pop();
+      else if(changePinBuf.length<4)changePinBuf.push(k);
+      document.querySelectorAll('#change-pin-dots .pin-dot').forEach(function(d,i){d.classList.toggle('filled',i<changePinBuf.length)});
+      if(changePinBuf.length===4)setTimeout(changePin,200);
+    };
+    pad.appendChild(d);
+  });
+}
+
+async function changeName(){
+  var newName=document.getElementById('change-name-input').value.trim();
+  var err=document.getElementById('change-err');
+  if(!newName){err.textContent='Enter a new name';return}
+  try{
+    var r=await fetch(API+'/api/change-name',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({user_id:user.id,new_name:newName})});
+    var d=await r.json();
+    if(!r.ok){err.textContent=d.error;return}
+    user.name=newName;
+    document.getElementById('nav-avatar').textContent=newName.split(' ').map(function(w){return w[0]}).join('').slice(0,2).toUpperCase();
+    document.getElementById('me-avatar').textContent=newName.split(' ').map(function(w){return w[0]}).join('').slice(0,2).toUpperCase();
+    document.getElementById('me-name').textContent=newName;
+    var hr=new Date().getHours();
+    document.getElementById('nav-greeting').textContent=(hr<12?'Morning':hr<17?'Afternoon':'Evening')+', '+newName+' 👋';
+    document.getElementById('change-name-input').value='';
+    err.textContent='';
+    alert('Name updated to '+newName);
+  }catch(e){err.textContent='Connection error'}
+}
+
+async function changePin(){
+  var err=document.getElementById('change-err');
+  var pin=changePinBuf.join('');
+  try{
+    var r=await fetch(API+'/api/admin/reset-pin',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({user_id:user.id,new_pin:pin})});
+    var d=await r.json();
+    changePinBuf=[];
+    document.querySelectorAll('#change-pin-dots .pin-dot').forEach(function(d){d.classList.remove('filled')});
+    if(!r.ok){err.textContent=d.error;return}
+    err.textContent='';
+    alert('PIN updated successfully!');
   }catch(e){err.textContent='Connection error'}
 }
 
