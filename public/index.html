@@ -737,7 +737,8 @@ async function loadAdminWinners(){
     var r=await fetch(API+'/api/leaderboard?month='+month);var board=await r.json();
     if(board.length){
       var leader=board[0];
-      el.innerHTML+='<div class="card card-gold" style="margin-bottom:12px"><div style="font-size:12px;color:var(--tx2);margin-bottom:4px">Current leader — '+months[now.getMonth()]+'</div><div style="font-size:16px;font-weight:600">'+leader.name+'</div><div style="font-size:12px;color:var(--tx2)">'+leader.points+' pts · '+leader.totalDays+' days · '+leader.streak+' streak</div><button class="btn btn-gold" onclick="recordWinner('+JSON.stringify(leader).replace(/"/g,\'&quot;\')+')" style="margin-top:10px;margin-bottom:0;font-size:13px;padding:10px">👑 Crown '+leader.name+' as champion</button></div>';
+      window._adminLeader = leader;
+      el.innerHTML+='<div class="card card-gold" style="margin-bottom:12px"><div style="font-size:12px;color:var(--tx2);margin-bottom:4px">Current leader — '+months[now.getMonth()]+'</div><div style="font-size:16px;font-weight:600">'+leader.name+'</div><div style="font-size:12px;color:var(--tx2)">'+leader.points+' pts · '+leader.totalDays+' days · '+leader.streak+' streak</div><button class="btn btn-gold" onclick="recordWinner(window._adminLeader)" style="margin-top:10px;margin-bottom:0;font-size:13px;padding:10px">👑 Crown '+leader.name+' as champion</button></div>';
     }
   }catch(e){}
 }
