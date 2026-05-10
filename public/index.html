@@ -343,7 +343,7 @@ textarea{resize:none;height:72px}
     <div class="field"><label>Notes (optional)</label><textarea id="log-notes" placeholder="e.g. 3 mile run, felt strong..."></textarea></div>
     <div style="display:flex;align-items:flex-start;gap:10px;margin:4px 0 12px;padding:12px;background:var(--sf2);border-radius:var(--rsm);border:1px solid var(--bd2)">
       <input type="checkbox" id="log-honor" style="width:18px;height:18px;flex-shrink:0;margin-top:2px;accent-color:var(--gold)">
-      <label for="log-honor" style="font-size:13px;color:var(--tx2);line-height:1.4;cursor:pointer">I confirm this was a genuine workout of at least 30 minutes. I am logging truthfully and with integrity.</label>
+      <label for="log-honor" style="font-size:13px;color:var(--tx2);line-height:1.4;cursor:pointer">I confirm this activity happened and I am logging truthfully and with integrity.</label>
     </div>
     <div class="err" id="log-err"></div>
     <button class="btn btn-gold" onclick="submitWorkout()">Log it</button>
@@ -384,7 +384,7 @@ textarea{resize:none;height:72px}
       <button class="btn" id="timer-pause-btn" onclick="togglePause()" style="flex:1;margin-bottom:0">Pause</button>
       <button class="btn btn-gold" id="timer-done-btn" onclick="finishTimer()" style="flex:1;margin-bottom:0;opacity:.5" disabled>Done</button>
     </div>
-    <p class="muted" style="font-size:11px;margin-top:12px" id="timer-min-note">Log unlocks at 30 minutes</p>
+    <p class="muted" style="font-size:11px;margin-top:12px" id="timer-min-note">Sessions stack — 30 min cumulative earns a point</p>
   </div>
 </div>
 
@@ -1059,7 +1059,7 @@ function updateTimerDisplay(){
     var remaining=THIRTY_MIN-timerSeconds;
     var remMins=Math.floor(remaining/60);
     var remSecs=remaining%60;
-    statusEl.textContent=remMins+'m '+String(remSecs).padStart(2,'0')+'s until unlock';
+    statusEl.textContent=remMins+'m '+String(remSecs).padStart(2,'0')+'s to reach 30 min';
     statusEl.className='timer-status';
     noteEl.style.display='block';
   }
