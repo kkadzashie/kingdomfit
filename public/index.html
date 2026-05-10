@@ -639,10 +639,12 @@ function renderCalendar(){
     if(day>now.getDate())cls+=' future';
     var isFuture=day>now.getDate();
     var daysBack=(now.getDate()-day);
-    if(!isFuture&&!dates.has(k)&&daysBack<=7&&daysBack>0)cls+=' past-unlogged';
+    var hasActivity=!!dayTotalsMap[k];
+    if(!isFuture&&!hasActivity&&daysBack<=7&&daysBack>0)cls+=' past-unlogged';
     el.className=cls;el.textContent=day;
-    if(!isFuture&&!dates.has(k)&&daysBack<=7){(function(kk){el.onclick=function(){openModal(kk)}})(k)}
-    else if(!isFuture&&dates.has(k)){el.title='Logged'}
+    if(!isFuture&&daysBack<=7&&daysBack>0){(function(kk){el.onclick=function(){openModal(kk)}})(k)}
+    else if(!isFuture&&day===now.getDate()){el.onclick=function(){openTimer()}}
+    if(hasActivity){el.title=dayTotalsMap[k]+' min logged'}
     grid.appendChild(el);
   }
   renderMonthHistory();
@@ -919,7 +921,7 @@ async function submitWorkout(){
   var notes=document.getElementById('log-notes').value.trim();
   var err=document.getElementById('log-err');
   if(!activity){err.textContent='Select an activity';return}
-  if(!duration||duration<30){err.textContent='Minimum 30 minutes';return}
+  if(!duration||duration<1){err.textContent='Enter duration in minutes';return}
   if(!document.getElementById('log-honor').checked){err.textContent='Please confirm your workout with the integrity checkbox to proceed';return}
   var logDate=logDateTarget||todayStr();
   try{
@@ -1019,8 +1021,8 @@ function startTimer(){
   document.getElementById('timer-activity-pick').style.display='none';
   document.getElementById('timer-running').style.display='block';
   document.getElementById('timer-act-label').textContent=act;
-  document.getElementById('timer-done-btn').disabled=true;
-  document.getElementById('timer-done-btn').style.opacity='.5';
+  document.getElementById('timer-done-btn').disabled=false;
+  document.getElementById('timer-done-btn').style.opacity='1';
   document.getElementById('timer-pause-btn').textContent='Pause';
   updateTimerDisplay();
   timerInterval=setInterval(function(){
