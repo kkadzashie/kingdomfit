@@ -502,11 +502,17 @@ async function deleteSelected(tab){
   if(!selected[tab].size)return;
   var count=selected[tab].size;
   if(!confirm('Delete '+count+' workout'+(count>1?'s':'')+' ? This cannot be undone.'))return;
-  for(var d of Array.from(selected[tab]))await fetch(API+'/api/workouts/'+user.id+'/'+d,{method:'DELETE'});
-  editMode[tab]=false;selected[tab].clear();
+  var dates=Array.from(selected[tab]);
+  for(var i=0;i<dates.length;i++){
+    await fetch(API+'/api/workouts/'+user.id+'/'+dates[i],{method:'DELETE'});
+  }
+  editMode[tab]=false;
+  selected[tab].clear();
   document.getElementById('edit-btn-'+tab).textContent='Edit';
   document.getElementById('toolbar-'+tab).style.display='none';
-  await loadData();if(tab==='month')renderCalendar();
+  await loadData();
+  renderWorkoutHistory();
+  if(tab==='month'){renderCalendar();renderMonthHistory();}
 }
 
 // Calendar
