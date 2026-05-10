@@ -240,6 +240,7 @@ textarea{resize:none;height:72px}
       <select id="h2h-select" onchange="renderH2H()" style="margin-bottom:0"><option value="">Compare with someone...</option></select>
       <div id="h2h-result" style="margin-top:10px;display:none"></div>
     </div>
+    <div id="prize-banner" style="display:none;margin-bottom:12px"></div>
     <div class="card" style="padding:0 16px" id="board-list"></div>
     <!-- Winners archive -->
     <div style="margin-top:20px">
@@ -309,6 +310,10 @@ textarea{resize:none;height:72px}
     </div>
     <div class="field"><label>Duration (minutes)</label><input type="number" id="log-duration" min="30" max="480" placeholder="e.g. 45" inputmode="numeric"></div>
     <div class="field"><label>Notes (optional)</label><textarea id="log-notes" placeholder="e.g. 3 mile run, felt strong..."></textarea></div>
+    <div style="display:flex;align-items:flex-start;gap:10px;margin:4px 0 12px;padding:12px;background:var(--sf2);border-radius:var(--rsm);border:1px solid var(--bd2)">
+      <input type="checkbox" id="log-honor" style="width:18px;height:18px;flex-shrink:0;margin-top:2px;accent-color:var(--gold)">
+      <label for="log-honor" style="font-size:13px;color:var(--tx2);line-height:1.4;cursor:pointer">I confirm this was a genuine workout of at least 30 minutes. I am logging truthfully and with integrity.</label>
+    </div>
     <div class="err" id="log-err"></div>
     <button class="btn btn-gold" onclick="submitWorkout()">Log it</button>
     <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
@@ -549,6 +554,15 @@ async function renderBoard(){
   var month=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
   var months=['January','February','March','April','May','June','July','August','September','October','November','December'];
   document.getElementById('board-month-lbl').textContent=months[now.getMonth()]+' '+now.getFullYear();
+  // Load prize banner
+  try{
+    var pr=await fetch(API+'/api/prize');var pd=await pr.json();
+    var pb=document.getElementById('prize-banner');
+    if(pd.prize){
+      pb.style.display='block';
+      pb.innerHTML='<div style="background:var(--gd);border:1px solid var(--gb);border-radius:var(--r);padding:14px 16px;display:flex;align-items:center;gap:12px"><span style="font-size:24px">🏆</span><div><div style="font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);margin-bottom:2px">This month's prize</div><div style="font-size:16px;font-weight:600">'+pd.prize+'</div></div></div>';
+    }else{pb.style.display='none';}
+  }catch(e){}
   var list=document.getElementById('board-list');
   try{
     var r=await fetch(API+'/api/leaderboard?month='+month);
@@ -575,7 +589,16 @@ async function renderBoard(){
     var wl=document.getElementById('winners-list');
     if(!winners.length){wl.innerHTML='<p class="muted" style="font-size:13px">No past champions yet.</p>';return}
     var mnames=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    wl.innerHTML=winners.map(function(w){
+    // Trophy count per person
+    var trophies={};
+    winners.forEach(function(w){trophies[w.winner_name]=(trophies[w.winner_name]||0)+1});
+    // All-time leaderboard
+    var topChamps=Object.entries(trophies).sort(function(a,b){return b[1]-a[1]});
+    var hallHtml='<div style="margin-bottom:14px"><h3 style="margin-bottom:8px">All-Time Champions</h3>'
+      +topChamps.map(function(e,i){
+        return '<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--bd)"><span style="font-size:16px">'+(i===0?'🥇':i===1?'🥈':'🥉')+'</span><span style="flex:1;font-weight:500">'+e[0]+'</span><span style="font-size:13px;color:var(--gold);font-weight:600">'+e[1]+' 👑</span></div>';
+      }).join('')+'</div>';
+    wl.innerHTML=hallHtml+'<h3 style="margin-bottom:8px">Monthly History</h3>'+winners.map(function(w){
       var parts=w.month.split('-');var mLabel=mnames[parseInt(parts[1])-1]+' '+parts[0];
       return '<div class="winner-card"><span style="font-size:24px">👑</span><div><div style="font-weight:600">'+w.winner_name+'</div><div style="font-size:12px;color:var(--tx2)">'+mLabel+' · '+w.points+' pts · '+w.total_days+' days · '+w.streak+' streak</div></div></div>';
     }).join('');
@@ -725,7 +748,15 @@ function copyCode(code){
 
 async function loadAdminSettings(){
   var el=document.getElementById('admin-settings');
-  el.innerHTML='<div class="field"><label>Invite-only mode</label><div style="display:flex;align-items:center;gap:12px"><input type="checkbox" id="invite-only-toggle" style="width:auto;padding:0" onchange="saveSettings()"><span class="muted" style="font-size:13px">Require invite code to join</span></div></div>';
+  el.innerHTML='<div class="field"><label>Monthly Prize</label><input type="text" id="prize-input" placeholder="e.g. $50 cash, gift card..." style="margin-bottom:6px"><button class="btn btn-gold" onclick="savePrize()" style="margin-bottom:12px;padding:10px;font-size:13px">Save prize</button></div><div class="field"><label>Invite-only mode</label><div style="display:flex;align-items:center;gap:12px"><input type="checkbox" id="invite-only-toggle" style="width:auto;padding:0" onchange="saveSettings()"><span class="muted" style="font-size:13px">Require invite code to join</span></div></div>';
+  fetch(API+'/api/prize').then(function(r){return r.json()}).then(function(d){if(d.prize)document.getElementById('prize-input').value=d.prize}).catch(function(){});
+}
+
+async function savePrize(){
+  var prize=document.getElementById('prize-input').value.trim();
+  await fetch(API+'/api/prize',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prize:prize})});
+  renderBoard();
+  alert('Prize updated!');
 }
 
 async function saveSettings(){
@@ -765,6 +796,7 @@ function openModal(dateOverride){
   document.getElementById('log-activity').value='';
   document.getElementById('log-duration').value='';
   document.getElementById('log-notes').value='';
+  document.getElementById('log-honor').checked=false;
   if(dateOverride){
     var d=new Date(dateOverride+'T12:00:00');
     var months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -785,6 +817,7 @@ async function submitWorkout(){
   var err=document.getElementById('log-err');
   if(!activity){err.textContent='Select an activity';return}
   if(!duration||duration<30){err.textContent='Minimum 30 minutes';return}
+  if(!document.getElementById('log-honor').checked){err.textContent='Please confirm your workout with the integrity checkbox';return}
   var logDate=logDateTarget||todayStr();
   try{
     var r=await fetch(API+'/api/workouts',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({user_id:user.id,log_date:logDate,activity,duration_minutes:duration,notes})});

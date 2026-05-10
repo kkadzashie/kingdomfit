@@ -66,8 +66,6 @@ def init_db():
             value TEXT
         );
         INSERT INTO app_settings (key,value) VALUES ('invite_only','false') ON CONFLICT DO NOTHING;
-        ALTER TABLE users ADD COLUMN IF NOT EXISTS is_admin BOOLEAN DEFAULT FALSE;
-        UPDATE users SET is_admin = TRUE WHERE name_lower = 'mrs. dk';
     """)
     conn.commit()
     cur.close(); conn.close()
@@ -186,7 +184,7 @@ def login():
     user = cur.fetchone(); cur.close(); conn.close()
     if not user or user['pin_hash']!=hash_pin(pin):
         return jsonify(error='Invalid name or PIN'),401
-    return jsonify(id=user['id'],name=user['name'],is_admin=user.get('is_admin',False))
+    return jsonify(id=user['id'],name=user['name'],is_admin=user['is_admin'])
 
 # ── Workouts ──────────────────────────────────────────────────────────────────
 @app.route('/api/workouts', methods=['POST'])
@@ -226,9 +224,9 @@ def get_workouts(user_id):
     month=request.args.get('month')
     conn=get_db(); cur=conn.cursor()
     if month:
-        cur.execute("SELECT id, user_id, TO_CHAR(log_date,'YYYY-MM-DD') as log_date, activity, duration_minutes, notes FROM workouts WHERE user_id=%s AND TO_CHAR(log_date,'YYYY-MM')=%s ORDER BY log_date DESC",(user_id,month))
+        cur.execute("SELECT * FROM workouts WHERE user_id=%s AND TO_CHAR(log_date,'YYYY-MM')=%s ORDER BY log_date DESC",(user_id,month))
     else:
-        cur.execute("SELECT id, user_id, TO_CHAR(log_date,'YYYY-MM-DD') as log_date, activity, duration_minutes, notes FROM workouts WHERE user_id=%s ORDER BY log_date DESC",(user_id,))
+        cur.execute('SELECT * FROM workouts WHERE user_id=%s ORDER BY log_date DESC',(user_id,))
     rows=cur.fetchall(); cur.close(); conn.close()
     return jsonify([dict(r) for r in rows])
 
@@ -394,15 +392,6 @@ def list_invites():
                    FROM invite_codes i LEFT JOIN users u ON u.id=i.used_by ORDER BY i.created_at DESC''')
     rows=cur.fetchall(); cur.close(); conn.close()
     return jsonify([dict(r) for r in rows])
-
-
-@app.route('/api/admin/make-admin', methods=['POST'])
-def make_admin():
-    data = request.json
-    conn = get_db(); cur = conn.cursor()
-    cur.execute('UPDATE users SET is_admin = TRUE WHERE name_lower = %s', (data["name"].lower(),))
-    conn.commit(); cur.close(); conn.close()
-    return jsonify(ok=True)
 
 @app.route('/',defaults={'path':''})
 @app.route('/<path:path>')
