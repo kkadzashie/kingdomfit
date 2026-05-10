@@ -258,9 +258,9 @@ def get_workouts(user_id):
     month=request.args.get('month')
     conn=get_db(); cur=conn.cursor()
     if month:
-        cur.execute("SELECT * FROM workouts WHERE user_id=%s AND TO_CHAR(log_date,'YYYY-MM')=%s ORDER BY log_date DESC",(user_id,month))
+        cur.execute("SELECT id, user_id, TO_CHAR(log_date,'YYYY-MM-DD') as log_date, activity, duration_minutes, notes FROM workouts WHERE user_id=%s AND TO_CHAR(log_date,'YYYY-MM')=%s ORDER BY log_date DESC",(user_id,month))
     else:
-        cur.execute('SELECT * FROM workouts WHERE user_id=%s ORDER BY log_date DESC',(user_id,))
+        cur.execute("SELECT id, user_id, TO_CHAR(log_date,'YYYY-MM-DD') as log_date, activity, duration_minutes, notes FROM workouts WHERE user_id=%s ORDER BY log_date DESC",(user_id,))
     rows=cur.fetchall(); cur.close(); conn.close()
     return jsonify([dict(r) for r in rows])
 
@@ -288,7 +288,7 @@ def remove_reaction(workout_id,user_id):
 def feed():
     conn=get_db(); cur=conn.cursor()
     cur.execute("""
-        SELECT w.id,w.log_date,w.activity,w.duration_minutes,w.notes,
+        SELECT w.id,TO_CHAR(w.log_date,'YYYY-MM-DD') as log_date,w.activity,w.duration_minutes,w.notes,
                u.name as user_name,u.id as user_id,
                COALESCE(json_agg(json_build_object('emoji',r.emoji,'user_id',r.user_id))
                FILTER(WHERE r.id IS NOT NULL),'[]') as reactions
