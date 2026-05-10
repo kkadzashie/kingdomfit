@@ -393,6 +393,15 @@ def list_invites():
     rows=cur.fetchall(); cur.close(); conn.close()
     return jsonify([dict(r) for r in rows])
 
+
+@app.route('/api/admin/make-admin', methods=['POST'])
+def make_admin():
+    data = request.json
+    conn = get_db(); cur = conn.cursor()
+    cur.execute('UPDATE users SET is_admin = TRUE WHERE name_lower = %s', (data["name"].lower(),))
+    conn.commit(); cur.close(); conn.close()
+    return jsonify(ok=True)
+
 @app.route('/',defaults={'path':''})
 @app.route('/<path:path>')
 def serve(path):
