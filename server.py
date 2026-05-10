@@ -312,11 +312,15 @@ def get_badges(user_id):
 @app.route('/api/records/<int:user_id>')
 def get_records(user_id):
     conn=get_db(); cur=conn.cursor()
-    cur.execute('SELECT log_date,activity FROM workouts WHERE user_id=%s ORDER BY log_date',(user_id,))
+    cur.execute("""SELECT TO_CHAR(log_date,'YYYY-MM-DD') as log_date, activity, duration_minutes FROM workouts WHERE user_id=%s ORDER BY log_date""",(user_id,))
     ws=cur.fetchall(); cur.close(); conn.close()
-    mc2={}
+    day_totals={}
     for w in ws:
-        mk=str(w['log_date'])[:7]; mc2[mk]=mc2.get(mk,0)+1
+        dk=str(w['log_date'])[:10]; day_totals[dk]=day_totals.get(dk,0)+(w.get('duration_minutes') or 0)
+    mc2={}
+    for dk,total in day_totals.items():
+        if total>=30:
+            mk=dk[:7]; mc2[mk]=mc2.get(mk,0)+1
     best_mk=max(mc2,key=mc2.get) if mc2 else None
     ac={}
     for w in ws: ac[w['activity']]=ac.get(w['activity'],0)+1
