@@ -66,6 +66,8 @@ def init_db():
             value TEXT
         );
         INSERT INTO app_settings (key,value) VALUES ('invite_only','false') ON CONFLICT DO NOTHING;
+        ALTER TABLE users ADD COLUMN IF NOT EXISTS is_admin BOOLEAN DEFAULT FALSE;
+        UPDATE users SET is_admin = TRUE WHERE name_lower = 'mrs. dk';
     """)
     conn.commit()
     cur.close(); conn.close()
