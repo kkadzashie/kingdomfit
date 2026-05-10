@@ -43,8 +43,7 @@ def init_db():
             notes TEXT DEFAULT '',
             logged_at TIMESTAMP DEFAULT NOW()
         );
-        CREATE UNIQUE INDEX IF NOT EXISTS workouts_user_date_activity
-            ON workouts(user_id, log_date, activity);
+        -- Multiple sessions per day allowed, no unique constraint on activity
         CREATE TABLE IF NOT EXISTS reactions (
             id SERIAL PRIMARY KEY,
             workout_id INTEGER NOT NULL REFERENCES workouts(id) ON DELETE CASCADE,
@@ -237,8 +236,8 @@ def log_workout():
         cur.execute('SELECT COALESCE(SUM(duration_minutes),0) as total FROM workouts WHERE user_id=%s AND log_date=%s',(user_id,log_date))
         day_total = cur.fetchone()['total']
         return jsonify(id=wid,new_badges=new_badges,day_total=day_total,day_qualifies=day_total>=30)
-    except psycopg2.errors.UniqueViolation:
-        conn.rollback(); return jsonify(error='Already logged this activity for this date — try a different activity'),409
+    except Exception as ex:
+        conn.rollback(); return jsonify(error=str(ex)),500
     finally:
         cur.close(); conn.close()
 
