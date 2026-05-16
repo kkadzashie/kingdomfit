@@ -348,8 +348,10 @@ def leaderboard():
             dk = str(w['log_date'])[:10]
             day_totals_m[dk] = day_totals_m.get(dk,0) + (w.get('duration_minutes') or 0)
         days = sum(1 for t in day_totals_m.values() if t>=30)
+        total_mins = sum((w.get('duration_minutes') or 0) for w in mws)
+        total_hours = round(total_mins / 60, 1)
         streak=calc_streak([dict(w) for w in aws]); pts=days+(streak*2)
-        board.append(dict(id=u['id'],name=u['name'],totalDays=days,streak=streak,points=pts,badges=bkeys))
+        board.append(dict(id=u['id'],name=u['name'],totalDays=days,streak=streak,points=pts,badges=bkeys,totalHours=total_hours))
     cur.close(); conn.close()
     board.sort(key=lambda x:(-x['points'],-x['streak'],-x['totalDays']))
     return jsonify(board)

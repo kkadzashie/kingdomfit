@@ -682,7 +682,7 @@ async function renderBoard(){
         +'<div class="rank-badge '+(i<3?rc[i]:'')+'">'+(i<3?i+1+'':i+1)+'</div>'
         +'<div style="flex:1"><div style="font-size:14px;font-weight:500">'+p.name+(isMe?' <span style="font-size:11px;color:var(--tx2)">(you)</span>':'')+(p.streak>1?'<span class="streak-badge">'+p.streak+'🔥</span>':'')+(topBadges?' <span style="font-size:13px">'+topBadges+'</span>':'')+'</div>'
         +'<div style="font-size:11px;color:var(--tx2);margin-top:1px">'+p.totalDays+' day'+(p.totalDays!==1?'s':'')+' this month</div></div>'
-        +'<div style="text-align:right"><div class="board-pts-val">'+p.points+'</div><div class="board-pts-lbl">pts</div></div></div>';
+        +'<div style="text-align:right"><div class="board-pts-val">'+p.points+'</div><div class="board-pts-lbl">pts · '+(p.totalHours||0)+'h</div></div></div>';
     }).join('');
   }catch(e){list.innerHTML='<p class="muted" style="padding:16px 0;text-align:center;font-size:13px">Could not load</p>'}
   // Winners
