@@ -202,8 +202,9 @@ textarea{resize:none;height:72px}
       <div class="stat"><div class="stat-val gold" id="st-streak">0</div><div class="stat-lbl">Day streak</div></div>
       <div class="stat"><div class="stat-val" id="st-days">0</div><div class="stat-lbl">Days this month</div></div>
       <div class="stat"><div class="stat-val green" id="st-pts">0</div><div class="stat-lbl">Points</div></div>
-      <div class="stat"><div class="stat-val" id="st-pct">0%</div><div class="stat-lbl">Month completion</div></div>
+      <div class="stat"><div class="stat-val" id="st-hrs">0h</div><div class="stat-lbl">Hours this month</div></div>
     </div>
+    <div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;font-size:12px;color:var(--tx2);margin-bottom:4px"><span>Month completion</span><span id="st-pct">0%</span></div><div style="height:6px;background:var(--sf2);border-radius:3px"><div id="pct-bar" style="height:100%;background:var(--gold);border-radius:3px;width:0%;transition:width .4s ease"></div></div></div>
     <div id="today-card"></div>
     <div class="divider"></div>
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
@@ -533,10 +534,14 @@ function renderToday(){
   var pts=days+streak*2;
   var now=new Date(new Date().toLocaleString('en-US',{timeZone:'America/Phoenix'}));
   var pct=Math.round(days/now.getDate()*100);
+  var totalMins=workoutsCache.reduce(function(s,w){return s+w.duration_minutes},0);
+  var totalHrs=Math.round(totalMins/60*10)/10;
   document.getElementById('st-streak').textContent=streak;
   document.getElementById('st-days').textContent=days;
   document.getElementById('st-pts').textContent=pts;
+  document.getElementById('st-hrs').textContent=totalHrs+'h';
   document.getElementById('st-pct').textContent=pct+'%';
+  document.getElementById('pct-bar').style.width=Math.min(pct,100)+'%';
   var tc=document.getElementById('today-card');
   if(todaySessions.length>0){
     var totalMin=todayMins;
@@ -681,7 +686,11 @@ async function renderBoard(){
         +'<div class="rank-badge '+(i<3?rc[i]:'')+'">'+(i<3?i+1+'':i+1)+'</div>'
         +'<div style="flex:1"><div style="font-size:14px;font-weight:500">'+p.name+(isMe?' <span style="font-size:11px;color:var(--tx2)">(you)</span>':'')+(p.streak>1?'<span class="streak-badge">'+p.streak+'🔥</span>':'')+(topBadges?' <span style="font-size:13px">'+topBadges+'</span>':'')+'</div>'
         +'<div style="font-size:11px;color:var(--tx2);margin-top:1px">'+p.totalDays+' day'+(p.totalDays!==1?'s':'')+' this month</div></div>'
-        +'<div style="text-align:right"><div class="board-pts-val">'+p.points+'</div><div class="board-pts-lbl">pts · '+(p.totalHours||0)+'h</div></div></div>';
+        +'<div style="display:flex;gap:16px;align-items:center">'
+        +'<div style="text-align:center"><div class="board-pts-val">'+p.points+'</div><div class="board-pts-lbl">pts</div></div>'
+        +'<div style="width:1px;height:28px;background:var(--bd2)"></div>'
+        +'<div style="text-align:center"><div style="font-size:20px;color:var(--bl)">'+( p.totalHours||0)+'h</div><div class="board-pts-lbl">hours</div></div>'
+        +'</div></div>';
     }).join('');
   }catch(e){list.innerHTML='<p class="muted" style="padding:16px 0;text-align:center;font-size:13px">Could not load</p>'}
   // Winners
@@ -701,7 +710,9 @@ async function renderBoard(){
       }).join('')+'</div>';
     wl.innerHTML=hallHtml+'<h3 style="margin-bottom:8px">Monthly History</h3>'+winners.map(function(w){
       var parts=w.month.split('-');var mLabel=mnames[parseInt(parts[1])-1]+' '+parts[0];
-      return '<div class="winner-card"><span style="font-size:24px">👑</span><div><div style="font-weight:600">'+w.winner_name+'</div><div style="font-size:12px;color:var(--tx2)">'+mLabel+' · '+w.points+' pts · '+w.total_days+' days · '+w.streak+' streak</div></div></div>';
+      var icon=w.winner_type==='hours'?'⏱':'👑';
+      var extra=w.winner_type==='hours'?(w.total_hours||0)+'h':w.points+' pts · '+w.total_days+' days';
+      return '<div class="winner-card"><span style="font-size:24px">'+icon+'</span><div><div style="font-weight:600">'+w.winner_name+'</div><div style="font-size:12px;color:var(--tx2)">'+mLabel+' · '+extra+'</div></div></div>';
     }).join('');
   }catch(e){}
 }
@@ -878,17 +889,22 @@ async function loadAdminWinners(){
     var r=await fetch(API+'/api/leaderboard?month='+month);var board=await r.json();
     if(board.length){
       var leader=board[0];
-      window._adminLeader = leader;
-      el.innerHTML+='<div class="card card-gold" style="margin-bottom:12px"><div style="font-size:12px;color:var(--tx2);margin-bottom:4px">Current leader — '+months[now.getMonth()]+'</div><div style="font-size:16px;font-weight:600">'+leader.name+'</div><div style="font-size:12px;color:var(--tx2)">'+leader.points+' pts · '+leader.totalDays+' days · '+leader.streak+' streak</div><button class="btn btn-gold" onclick="recordWinner(window._adminLeader)" style="margin-top:10px;margin-bottom:0;font-size:13px;padding:10px">👑 Crown '+leader.name+' as champion</button></div>';
+      window._adminLeader = leader; window._adminWinType='points';
+      el.innerHTML+='<div class="card card-gold" style="margin-bottom:12px"><div style="font-size:12px;color:var(--tx2);margin-bottom:4px">Points leader — '+months[now.getMonth()]+'</div><div style="font-size:16px;font-weight:600">'+leader.name+'</div><div style="font-size:12px;color:var(--tx2)">'+leader.points+' pts · '+leader.totalDays+' days · '+leader.streak+' streak</div><button class="btn btn-gold" onclick="recordWinner(window._adminLeader,1)" style="margin-top:10px;margin-bottom:0;font-size:13px;padding:10px">👑 Crown '+leader.name+' as Points Champion</button></div>';
+      // Hours leader
+      var hLeader=board.slice().sort(function(a,b){return (b.totalHours||0)-(a.totalHours||0)})[0];
+      window._adminHoursLeader=hLeader; window._adminHrsType='hours';
+      el.innerHTML+='<div class="card" style="margin-bottom:12px;border-color:var(--bl)"><div style="font-size:12px;color:var(--tx2);margin-bottom:4px">Hours leader — '+months[now.getMonth()]+'</div><div style="font-size:16px;font-weight:600">'+hLeader.name+'</div><div style="font-size:12px;color:var(--tx2)">'+(hLeader.totalHours||0)+'h · '+hLeader.totalDays+' days</div><button class="btn" onclick="recordWinner(window._adminHoursLeader,2)" style="margin-top:10px;margin-bottom:0;font-size:13px;padding:10px;border-color:var(--bl);color:var(--bl)">⏱ Crown '+hLeader.name+' as Hours Champion</button></div>';
     }
   }catch(e){}
 }
 
-async function recordWinner(leader){
+async function recordWinner(leader,type){
   var now=new Date();var month=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
-  if(!confirm('Crown '+leader.name+' as '+month+' champion?'))return;
-  await fetch(API+'/api/winners',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({month:month,winner_name:leader.name,points:leader.points,total_days:leader.totalDays,streak:leader.streak})});
-  alert('👑 '+leader.name+' crowned as champion!');loadAdminWinners();
+  type=type.replace(/&apos;/g,"'");var typeLabel=type==='hours'?'Hours Champion':'Points Champion';
+  if(!confirm('Crown '+leader.name+' as '+month+' '+typeLabel+'?'))return;
+  await fetch(API+'/api/winners',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({month:month,winner_name:leader.name,points:leader.points,total_days:leader.totalDays,streak:leader.streak,total_hours:leader.totalHours||0,winner_type:type===2?'hours':'points'})});
+  alert((type==='hours'?'⏱':'👑')+' '+leader.name+' crowned as '+typeLabel+'!');loadAdminWinners();
 }
 
 // Log modal
