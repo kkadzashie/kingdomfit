@@ -60,11 +60,13 @@ def init_db():
         );
         CREATE TABLE IF NOT EXISTS monthly_winners (
             id SERIAL PRIMARY KEY,
-            month TEXT UNIQUE NOT NULL,
+            month TEXT NOT NULL,
             winner_name TEXT,
             points INTEGER,
             total_days INTEGER,
-            streak INTEGER
+            streak INTEGER,
+            total_hours FLOAT DEFAULT 0,
+            winner_type TEXT DEFAULT 'points'
         );
         CREATE TABLE IF NOT EXISTS invite_codes (
             id SERIAL PRIMARY KEY,
@@ -388,11 +390,13 @@ def get_winners():
 @app.route('/api/winners',methods=['POST'])
 def record_winner():
     data=request.json; conn=get_db(); cur=conn.cursor()
-    cur.execute('''INSERT INTO monthly_winners(month,winner_name,points,total_days,streak)
-                   VALUES(%s,%s,%s,%s,%s) ON CONFLICT(month) DO UPDATE
-                   SET winner_name=%s,points=%s,total_days=%s,streak=%s''',
-                (data['month'],data['winner_name'],data['points'],data['total_days'],data['streak'],
-                 data['winner_name'],data['points'],data['total_days'],data['streak']))
+    winner_type = data.get('winner_type','points')
+    total_hours = data.get('total_hours',0)
+    month_key = data['month'] + '_' + winner_type
+    cur.execute('''INSERT INTO monthly_winners(month,winner_name,points,total_days,streak,total_hours,winner_type)
+                   VALUES(%s,%s,%s,%s,%s,%s,%s)
+                   ON CONFLICT DO NOTHING''',
+                (month_key,data['winner_name'],data['points'],data['total_days'],data['streak'],total_hours,winner_type))
     conn.commit(); cur.close(); conn.close(); return jsonify(ok=True)
 
 # ── Admin ─────────────────────────────────────────────────────────────────────
@@ -441,6 +445,27 @@ def list_invites():
                    FROM invite_codes i LEFT JOIN users u ON u.id=i.used_by ORDER BY i.created_at DESC''')
     rows=cur.fetchall(); cur.close(); conn.close()
     return jsonify([dict(r) for r in rows])
+
+
+@app.route('/api/change-name', methods=['POST'])
+def change_name():
+    data = request.json
+    user_id = data.get('user_id')
+    new_name = (data.get('new_name') or '').strip()
+    if not new_name: return jsonify(error='Name required'), 400
+    conn = get_db(); cur = conn.cursor()
+    try:
+        cur.execute('UPDATE users SET name=%s, name_lower=%s WHERE id=%s',
+                    (new_name, new_name.lower(), user_id))
+        conn.commit()
+        return jsonify(ok=True)
+    except Exception as e:
+        conn.rollback()
+        if 'unique' in str(e).lower():
+            return jsonify(error='Name already taken'), 409
+        return jsonify(error='Could not update name'), 500
+    finally:
+        cur.close(); conn.close()
 
 @app.route('/',defaults={'path':''})
 @app.route('/<path:path>')
