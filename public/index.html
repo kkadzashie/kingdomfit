@@ -137,6 +137,11 @@ textarea{resize:none;height:72px}
 .timer-status{font-size:13px;font-weight:500;margin-top:4px;min-height:20px}
 .timer-status.green{color:var(--gr)}
 .pulse{animation:pulse 2s ease-in-out infinite}
+.coach-msg-user{background:var(--gold);color:#0a0a0a;padding:10px 14px;border-radius:18px 18px 4px 18px;max-width:80%;align-self:flex-end;font-size:14px;line-height:1.5}
+.coach-msg-coach{background:var(--sf2);color:var(--tx);padding:10px 14px;border-radius:18px 18px 18px 4px;max-width:88%;align-self:flex-start;font-size:14px;line-height:1.6}
+.coach-msg-coach em{color:var(--gold);font-style:italic}
+.coach-typing{padding:10px 14px;background:var(--sf2);border-radius:18px;max-width:80px;align-self:flex-start}
+#coach-abigail.selected,#coach-anna.selected{border-color:var(--gold);background:var(--gd)}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
 </style>
 </head>
@@ -160,7 +165,7 @@ textarea{resize:none;height:72px}
   <h2 style="margin-bottom:6px">Join the<br><em style="color:var(--gold)">competition</em></h2>
   <p class="muted" style="margin-bottom:20px">Choose a name your crew will see on the leaderboard</p>
   <div class="field"><label>Your name</label><input type="text" id="reg-name" placeholder="e.g. Marcus or Coach D" autocomplete="off" autocorrect="off"></div>
-  <div class="field" id="reg-invite-field" style="display:none"><label>Invite Code</label><input type="text" id="reg-invite" placeholder="Enter invite code" autocomplete="off"></div>
+  <div class="field" id="reg-invite-field"><label>Invite Code <span class="muted" style="font-weight:400;font-size:11px">(required if group is invite-only)</span></label><input type="text" id="reg-invite" placeholder="Enter invite code" autocomplete="off" autocapitalize="characters" style="text-transform:uppercase"></div>
   <p class="muted" style="font-size:12px;margin-bottom:4px">Choose a 4-digit PIN</p>
   <div class="pin-display" id="reg-dots"><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div></div>
   <div class="pinpad" id="reg-pad"></div>
@@ -194,6 +199,7 @@ textarea{resize:none;height:72px}
     <div class="tab" onclick="switchTab(2,this)">Board</div>
     <div class="tab" onclick="switchTab(3,this)">Feed</div>
     <div class="tab" onclick="switchTab(4,this)">Me</div>
+    <div class="tab" onclick="switchTab(5,this)">Coaches</div>
   </div>
 
   <!-- TODAY -->
@@ -427,7 +433,7 @@ function show(id){document.querySelectorAll('.screen').forEach(function(s){s.cla
 
 function switchTab(idx,el){
   document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active')});el.classList.add('active');
-  ['tab-today','tab-month','tab-board','tab-feed','tab-me'].forEach(function(t,i){document.getElementById(t).style.display=i===idx?'block':'none'});
+  ['tab-today','tab-month','tab-board','tab-feed','tab-me','tab-coaches'].forEach(function(t,i){document.getElementById(t).style.display=i===idx?'block':'none'});
   if(idx===1)renderCalendar();
   if(idx===2)renderBoard();
   if(idx===3)renderFeed();
@@ -1099,6 +1105,192 @@ function finishTimer(){
     document.getElementById('log-modal-sub').textContent='Timer: '+String(Math.floor(timerSeconds/60)).padStart(2,'0')+':'+String(timerSeconds%60).padStart(2,'0')+' · Duration pre-filled';
   },100);
 }
+
+// ── Kingdom Coaches ────────────────────────────────────────────────────────
+var currentCoach = null;
+var coachHistory = [];
+
+var COACH_CONFIG = {
+  abigail: {
+    name: 'Abigail',
+    emoji: '👸',
+    verse: '"She was a woman of good understanding" — 1 Samuel 25:3',
+    system: `You are Abigail, a Kingdom Fit mental wellness and emotional health coach. You are wise, warm, and direct — like a seasoned woman of God who has been through real things. You meet people in their pain and pull them up with truth and scripture.
+
+Your foundation scriptures include: Isaiah 43:2, Romans 8:37, Philippians 4:6-7, 2 Timothy 1:7, Isaiah 61:3, Psalm 34:18, Joel 2:25, John 10:10.
+
+You speak with the radical faith of Kathryn Kuhlman, the depth of Apostle Joshua Selman, and the Kingdom urgency of 2819 church. You believe in miracles, speak to destiny, call out greatness, and never let people stay in victimhood. You pray with power and speak life.
+
+CRITICAL RULES:
+- NEVER diagnose any mental health condition
+- Always recommend a licensed counselor for clinical issues (use phrases like "I'd encourage you to speak with a licensed counselor or therapist about this")
+- Always refer to a pastor for spiritual crisis (use phrases like "Please connect with your pastor about this")
+- Offer prayer at the end of conversations
+- Keep responses warm, faith-filled, practical, and under 200 words unless detail is truly needed
+- Always anchor back to scripture and identity in Christ
+- End difficult conversations with an empowering truth or scripture`
+  },
+  anna: {
+    name: 'Anna',
+    emoji: '🌿',
+    verse: '"She served God with fastings and prayers night and day" — Luke 2:37',
+    system: `You are Anna, a Kingdom Fit nutrition and body stewardship coach. You are gentle but convicted. You speak about food as worship — disciplining the body as an act of love for the temple God gave you. You are practical but always anchor back to purpose.
+
+Your foundation scriptures include: 1 Corinthians 6:19-20, Daniel 1:12-15, 1 Corinthians 9:27, Romans 12:1, 3 John 1:2, Proverbs 31:17, Genesis 1:29, Isaiah 40:31.
+
+You understand that Daniel refused the king's food and chose clean eating, and God honored it. You see food choices as stewardship, not punishment. You give practical, evidence-based nutrition guidance grounded in Kingdom purpose.
+
+CRITICAL RULES:
+- NEVER diagnose any medical or nutritional condition
+- Always recommend a doctor or registered dietitian for medical concerns (use phrases like "Please consult your doctor or a registered dietitian about this")
+- Never provide specific medical nutrition therapy (diabetic diets, eating disorder treatment, etc.)
+- Keep responses warm, practical, and under 200 words unless detail is truly needed
+- Always connect food and body care back to glorifying God
+- End with an encouraging scripture or Kingdom perspective`
+  }
+};
+
+function selectCoach(coachId) {
+  currentCoach = coachId;
+  coachHistory = [];
+  var config = COACH_CONFIG[coachId];
+  
+  // Update header
+  document.getElementById('coach-avatar').textContent = config.emoji;
+  document.getElementById('coach-name').textContent = config.name;
+  document.getElementById('coach-verse').textContent = config.verse;
+  
+  // Highlight selected card
+  document.getElementById('coach-abigail').classList.remove('selected');
+  document.getElementById('coach-anna').classList.remove('selected');
+  document.getElementById('coach-' + coachId).classList.add('selected');
+  
+  // Show chat
+  document.getElementById('coach-chat').style.display = 'block';
+  
+  // Clear messages
+  var msgs = document.getElementById('coach-messages');
+  msgs.innerHTML = '';
+  
+  // Show greeting
+  var greeting = coachId === 'abigail' 
+    ? 'Peace be with you. I\u2019m Abigail. What\u2019s on your heart today? No matter what you\u2019re carrying, you don\u2019t carry it alone. God\u2019s got you — and so do I.'
+    : 'Welcome. I\u2019m Anna. Your body is a temple and taking care of it is an act of worship. Whether you have questions about food, energy, or building healthy habits for the Kingdom — I\u2019m here. What would you like to explore?';
+  
+  appendCoachMessage(greeting, 'coach');
+  document.getElementById('coach-input').focus();
+}
+
+function clearCoach() {
+  currentCoach = null;
+  coachHistory = [];
+  document.getElementById('coach-chat').style.display = 'none';
+  document.getElementById('coach-abigail').classList.remove('selected');
+  document.getElementById('coach-anna').classList.remove('selected');
+}
+
+function appendCoachMessage(text, role) {
+  var msgs = document.getElementById('coach-messages');
+  var div = document.createElement('div');
+  div.className = role === 'user' ? 'coach-msg-user' : 'coach-msg-coach';
+  // Convert **text** to bold and *text* to italic
+  text = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>').replace(/\*(.+?)\*/g, '<em>$1</em>');
+  div.innerHTML = text;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+async function sendCoachMessage() {
+  if (!currentCoach) return;
+  var input = document.getElementById('coach-input');
+  var msg = input.value.trim();
+  if (!msg) return;
+  
+  var btn = document.getElementById('coach-send-btn');
+  btn.disabled = true;
+  btn.textContent = '...';
+  input.value = '';
+  
+  appendCoachMessage(msg, 'user');
+  
+  // Show typing indicator
+  var msgs = document.getElementById('coach-messages');
+  var typing = document.createElement('div');
+  typing.className = 'coach-typing';
+  typing.innerHTML = '<span style="color:var(--tx2);font-size:13px">typing...</span>';
+  typing.id = 'coach-typing';
+  msgs.appendChild(typing);
+  msgs.scrollTop = msgs.scrollHeight;
+  
+  // Add to history
+  coachHistory.push({role: 'user', content: msg});
+  
+  var config = COACH_CONFIG[currentCoach];
+  
+  try {
+    var response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: config.system,
+        messages: coachHistory
+      })
+    });
+    
+    var data = await response.json();
+    var reply = data.content && data.content[0] ? data.content[0].text : 'I\u2019m here for you. Could you share a bit more so I can better support you?';
+    
+    coachHistory.push({role: 'assistant', content: reply});
+    
+    // Remove typing indicator
+    var t = document.getElementById('coach-typing');
+    if (t) t.remove();
+    
+    appendCoachMessage(reply, 'coach');
+    
+  } catch(e) {
+    var t = document.getElementById('coach-typing');
+    if (t) t.remove();
+    appendCoachMessage('I\u2019m having trouble connecting right now. Please try again in a moment. 🙏', 'coach');
+  }
+  
+  btn.disabled = false;
+  btn.textContent = 'Send';
+}
+
+function submitPrayer() {
+  var input = document.getElementById('coach-input');
+  var request = input.value.trim() || 'General prayer request from Kingdom Fit';
+  alert('Your prayer request has been submitted. 🙏\n\n"The effective, fervent prayer of a righteous man avails much." — James 5:16');
+  input.value = '';
+}
+
+function connectLiveCoach() {
+  alert('To connect with a live Kingdom Fit coach, reach out to your group administrator.');
+}
+
+function findProfessional() {
+  if (currentCoach === 'anna') {
+    alert('For personalized medical nutrition therapy, please consult:\n\n• Your primary care physician\n• A registered dietitian (RD)\n• NASM-certified nutrition coach');
+  } else {
+    alert('For mental health support, please reach out to:\n\n• A licensed therapist or counselor\n• Your pastor or church counseling team\n• SAMHSA Helpline: 1-800-662-4357 (free, confidential)');
+  }
+}
+
+// Allow Enter key to send (Shift+Enter for newline)
+document.addEventListener('DOMContentLoaded', function() {
+  var ci = document.getElementById('coach-input');
+  if (ci) {
+    ci.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendCoachMessage();
+      }
+    });
+  }
+});
 
 function showBadgeToast(keys){
   var toast=document.getElementById('badge-toast');
