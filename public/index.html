@@ -611,6 +611,14 @@ function logout(){
   document.getElementById('bottom-nav').style.display='none';
   document.getElementById('top-nav').style.display='none';
   document.getElementById('prize-banner-top').style.display='none';
+  // Hide coach overlays
+  var coachChat = document.getElementById('coach-chat');
+  if(coachChat) coachChat.style.display='none';
+  var coachTab = document.getElementById('tab-coaches');
+  if(coachTab) coachTab.style.display='none';
+  var selView = document.getElementById('coach-selector-view');
+  if(selView) selView.style.display='block';
+  currentCoach=null; coachHistory=[];
   document.getElementById('login-name').value='';
   loginBuf.length=0;document.querySelectorAll('#login-dots .pin-dot').forEach(function(d){d.classList.remove('filled')});
   show('screen-welcome');
