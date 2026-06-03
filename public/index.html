@@ -568,7 +568,22 @@ function switchTab(idx,el){
   // el could be a bn-item or called programmatically
   var btn=document.getElementById('bn-'+idx);
   if(btn)btn.classList.add('active');
-  ['tab-today','tab-board','tab-feed','tab-coaches','tab-me'].forEach(function(t,i){document.getElementById(t).style.display=i===idx?'block':'none'});
+  ['tab-today','tab-board','tab-feed','tab-coaches','tab-me'].forEach(function(t,i){
+    var el=document.getElementById(t);
+    if(!el)return;
+    if(i===idx){
+      el.style.display='block';
+      // For coaches tab, make sure selector is visible
+      if(t==='tab-coaches'&&!currentCoach){
+        var sv=document.getElementById('coach-selector-view');
+        var cc=document.getElementById('coach-chat');
+        if(sv) sv.style.display='block';
+        if(cc) cc.style.display='none';
+      }
+    } else {
+      el.style.display='none';
+    }
+  });
   // FAB only on Month tab
   var fab=document.getElementById('fab');
   if(fab)fab.style.display=idx===0?'flex':'none';
@@ -1501,9 +1516,16 @@ function selectCoach(coachId) {
 function clearCoach() {
   currentCoach = null;
   coachHistory = [];
-  document.getElementById('coach-chat').style.display = 'none';
-  document.getElementById('coach-abigail').classList.remove('selected');
-  document.getElementById('coach-anna').classList.remove('selected');
+  var chat = document.getElementById('coach-chat');
+  if(chat) chat.style.display = 'none';
+  var sel = document.getElementById('coach-selector-view');
+  if(sel){ sel.style.display = 'block'; }
+  var tab = document.getElementById('tab-coaches');
+  if(tab){ tab.style.display = 'block'; tab.scrollTop = 0; }
+  var ab = document.getElementById('coach-abigail');
+  var an = document.getElementById('coach-anna');
+  if(ab) ab.classList.remove('selected');
+  if(an) an.classList.remove('selected');
 }
 
 function appendCoachMessage(text, role) {
