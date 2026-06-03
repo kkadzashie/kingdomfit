@@ -384,40 +384,94 @@ textarea{resize:none;height:72px}
     </button>
   </nav>
 
-  <!-- COACHES TAB -->
-  <div class="scroll-area" id="tab-coaches" style="display:none;padding:16px 20px 120px">
-    <h2 style="margin-bottom:4px">Kingdom Coaches</h2>
-    <p class="muted" style="font-size:13px;margin-bottom:20px">Faith-based guidance for your whole health journey</p>
-    <div style="display:flex;gap:12px;margin-bottom:20px">
-      <div onclick="selectCoach('abigail')" id="coach-abigail" class="card" style="flex:1;cursor:pointer;text-align:center;padding:16px;border:2px solid var(--bd)">
-        <div style="font-size:32px;margin-bottom:8px">&#128120;</div>
-        <div style="font-weight:600;font-size:15px">Abigail</div>
-        <div style="font-size:11px;color:var(--tx2);margin-top:4px">Mental Wellness<br>&amp; Emotional Health</div>
+  <!-- RESOURCES / COACHES TAB -->
+  <div class="scroll-area" id="tab-coaches" style="display:none;padding:0 0 120px">
+
+    <!-- Coach selector -->
+    <div id="coach-selector-view" style="padding:16px 20px">
+      <h2 style="margin-bottom:4px">Kingdom Resources</h2>
+      <p class="muted" style="font-size:13px;margin-bottom:20px">Faith-based coaching for your whole health journey</p>
+      <div style="display:flex;gap:12px;margin-bottom:24px">
+        <div onclick="selectCoach('abigail')" id="coach-abigail" class="card" style="flex:1;cursor:pointer;text-align:center;padding:20px 12px;border:2px solid var(--bd);transition:border-color .15s">
+          <div style="font-size:36px;margin-bottom:10px">&#128120;</div>
+          <div style="font-weight:700;font-size:15px;margin-bottom:4px">Abigail</div>
+          <div style="font-size:11px;color:var(--gold);font-style:italic;margin-bottom:6px">Mental Wellness</div>
+          <div style="font-size:11px;color:var(--tx2)">Emotional health &amp; faith support</div>
+        </div>
+        <div onclick="selectCoach('anna')" id="coach-anna" class="card" style="flex:1;cursor:pointer;text-align:center;padding:20px 12px;border:2px solid var(--bd);transition:border-color .15s">
+          <div style="font-size:36px;margin-bottom:10px">&#127807;</div>
+          <div style="font-weight:700;font-size:15px;margin-bottom:4px">Anna</div>
+          <div style="font-size:11px;color:var(--gold);font-style:italic;margin-bottom:6px">Nutrition Coach</div>
+          <div style="font-size:11px;color:var(--tx2)">Body stewardship &amp; healthy eating</div>
+        </div>
       </div>
-      <div onclick="selectCoach('anna')" id="coach-anna" class="card" style="flex:1;cursor:pointer;text-align:center;padding:16px;border:2px solid var(--bd)">
-        <div style="font-size:32px;margin-bottom:8px">&#127807;</div>
-        <div style="font-weight:600;font-size:15px">Anna</div>
-        <div style="font-size:11px;color:var(--tx2);margin-top:4px">Nutrition<br>&amp; Body Stewardship</div>
+
+      <!-- Prayer Request — standalone prominent section -->
+      <div class="card" style="margin-bottom:16px;background:var(--gd);border-color:var(--gb)">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+          <span style="font-size:24px">&#128591;</span>
+          <div>
+            <div style="font-weight:600;font-size:15px">Submit a Prayer Request</div>
+            <div style="font-size:12px;color:var(--tx2);margin-top:2px">"The effective, fervent prayer of a righteous man avails much." — James 5:16</div>
+          </div>
+        </div>
+        <textarea id="prayer-input" placeholder="Share your prayer request..." style="width:100%;min-height:80px;background:var(--sf);border:1px solid var(--bd);border-radius:var(--rsm);padding:10px 12px;color:var(--tx);font-size:13px;font-family:inherit;resize:vertical;box-sizing:border-box;margin-bottom:10px"></textarea>
+        <button onclick="submitPrayer()" class="btn btn-gold" style="margin-bottom:0;width:100%">Submit Prayer Request</button>
+      </div>
+
+      <!-- Resources section -->
+      <h3 style="margin-bottom:12px">Professional Resources</h3>
+      <div class="card" style="margin-bottom:10px;cursor:pointer" onclick="showMentalResources()">
+        <div style="display:flex;align-items:center;gap:12px">
+          <span style="font-size:22px">&#129504;</span>
+          <div style="flex:1">
+            <div style="font-weight:600;font-size:14px">Mental Health Support</div>
+            <div style="font-size:12px;color:var(--tx2);margin-top:2px">Counselors, therapists &amp; crisis support</div>
+          </div>
+          <span style="color:var(--tx2)">›</span>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:10px;cursor:pointer" onclick="showNutritionResources()">
+        <div style="display:flex;align-items:center;gap:12px">
+          <span style="font-size:22px">&#127825;</span>
+          <div style="flex:1">
+            <div style="font-weight:600;font-size:14px">Nutrition &amp; Dietitian Support</div>
+            <div style="font-size:12px;color:var(--tx2);margin-top:2px">Registered dietitians &amp; nutrition coaches</div>
+          </div>
+          <span style="color:var(--tx2)">›</span>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:10px;cursor:pointer" onclick="connectLiveCoach()">
+        <div style="display:flex;align-items:center;gap:12px">
+          <span style="font-size:22px">&#128222;</span>
+          <div style="flex:1">
+            <div style="font-weight:600;font-size:14px">Connect with a Live Coach</div>
+            <div style="font-size:12px;color:var(--tx2);margin-top:2px">Talk to your group administrator</div>
+          </div>
+          <span style="color:var(--tx2)">›</span>
+        </div>
       </div>
     </div>
-    <div id="coach-chat" style="display:none">
-      <div id="coach-header" style="display:flex;align-items:center;gap:12px;margin-bottom:16px;padding:12px;background:var(--sf2);border-radius:var(--r)">
-        <div id="coach-avatar" style="font-size:28px"></div>
+
+    <!-- Full-screen chat view -->
+    <div id="coach-chat" style="display:none;flex-direction:column;height:calc(100vh - 120px)">
+      <!-- Chat header -->
+      <div style="display:flex;align-items:center;gap:12px;padding:14px 20px;background:var(--sf);border-bottom:1px solid var(--bd);flex-shrink:0">
+        <button onclick="clearCoach()" style="background:none;border:none;color:var(--tx2);cursor:pointer;font-size:22px;padding:0;line-height:1">&#8592;</button>
+        <div id="coach-avatar" style="font-size:26px"></div>
         <div style="flex:1">
-          <div id="coach-name" style="font-weight:600;font-size:16px"></div>
-          <div id="coach-verse" style="font-size:11px;color:var(--gold);font-style:italic"></div>
+          <div id="coach-name" style="font-weight:700;font-size:16px"></div>
+          <div id="coach-verse" style="font-size:10px;color:var(--gold);font-style:italic;line-height:1.3"></div>
         </div>
-        <button onclick="clearCoach()" style="background:none;border:none;color:var(--tx2);cursor:pointer;font-size:13px">&#8592; Back</button>
       </div>
-      <div id="coach-messages" style="min-height:200px;max-height:400px;overflow-y:auto;margin-bottom:16px;display:flex;flex-direction:column;gap:12px"></div>
-      <div style="display:flex;gap:8px;align-items:flex-end">
-        <textarea id="coach-input" placeholder="Ask your question..." style="flex:1;min-height:44px;max-height:120px;resize:vertical;font-size:14px;padding:10px 12px;background:var(--sf2);border:1px solid var(--bd);border-radius:var(--r);color:var(--tx);font-family:inherit"></textarea>
-        <button onclick="sendCoachMessage()" id="coach-send-btn" class="btn btn-gold" style="margin-bottom:0;padding:12px 16px;flex-shrink:0">Send</button>
-      </div>
-      <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
-        <button onclick="submitPrayer()" class="btn" style="font-size:12px;padding:8px 12px;margin-bottom:0">&#128591; Submit for Prayer</button>
-        <button onclick="connectLiveCoach()" class="btn" style="font-size:12px;padding:8px 12px;margin-bottom:0">&#128222; Live Coach</button>
-        <button onclick="findProfessional()" class="btn" style="font-size:12px;padding:8px 12px;margin-bottom:0">&#127973; Find a Pro</button>
+      <!-- Messages -->
+      <div id="coach-messages" style="flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:12px;min-height:0"></div>
+      <!-- Input bar — fixed at bottom of chat -->
+      <div style="padding:12px 16px;background:var(--sf);border-top:1px solid var(--bd);flex-shrink:0">
+        <div style="display:flex;gap:8px;align-items:flex-end;margin-bottom:10px">
+          <textarea id="coach-input" placeholder="Ask your question..." rows="1" style="flex:1;min-height:40px;max-height:100px;resize:none;font-size:14px;padding:10px 12px;background:var(--sf2);border:1px solid var(--bd);border-radius:20px;color:var(--tx);font-family:inherit;line-height:1.4"></textarea>
+          <button onclick="sendCoachMessage()" id="coach-send-btn" class="btn btn-gold" style="margin:0;padding:10px 18px;border-radius:20px;flex-shrink:0;height:40px;align-self:flex-end">Send</button>
+        </div>
       </div>
     </div>
   </div>
@@ -747,12 +801,10 @@ async function renderBoard(){
   // Load prize banner
   try{
     var pr=await fetch(API+'/api/prize');var pd=await pr.json();
-    var pb=document.getElementById('prize-banner');
-    if(pd.prize){
-      pb.style.display='block';
-      pb.innerHTML='<div style="background:var(--gd);border:1px solid var(--gb);border-radius:var(--r);padding:14px 16px;display:flex;align-items:center;gap:12px"><span style="font-size:24px">🏆</span><div><div style="font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);margin-bottom:2px">This month&#39;s prize</div><div style="font-size:16px;font-weight:600">'+pd.prize+'</div></div></div>';
-    }else{pb.style.display='none';}
-  }catch(e){}
+    var pb=document.getElementById('prize-banner-top');
+    var pt=document.getElementById('prize-banner-text');
+    if(pd.prize&&pb&&pt){pb.style.display='block';pt.textContent=pd.prize;}
+    else if(pb){pb.style.display='none';}}catch(e){}
   var list=document.getElementById('board-list');
   try{
     var r=await fetch(API+'/api/leaderboard?month='+month);
@@ -1331,7 +1383,8 @@ function selectCoach(coachId) {
   document.getElementById('coach-' + coachId).classList.add('selected');
   
   // Show chat
-  document.getElementById('coach-chat').style.display = 'block';
+  document.getElementById('coach-selector-view').style.display = 'none';
+  document.getElementById('coach-chat').style.display = 'flex';
   
   // Clear messages
   var msgs = document.getElementById('coach-messages');
@@ -1425,10 +1478,15 @@ async function sendCoachMessage() {
   btn.textContent = 'Send';
 }
 
-function submitPrayer() {
-  var input = document.getElementById('coach-input');
-  var request = input.value.trim() || 'General prayer request from Kingdom Fit';
-  alert('Your prayer request has been submitted. 🙏\n\n"The effective, fervent prayer of a righteous man avails much." — James 5:16');
+function submitPrayer(){
+  var input = document.getElementById('prayer-input');
+  var request = input ? input.value.trim() : '';
+  if(!request){
+    alert('Please write your prayer request before submitting.');
+    if(input) input.focus();
+    return;
+  }
+  alert('\u{1F64F} Your prayer request has been submitted.\n\nWe are standing in agreement with you.\n"Where two or three gather in my name, there am I with them." \u2014 Matthew 18:20');
   input.value = '';
 }
 
@@ -1436,12 +1494,49 @@ function connectLiveCoach() {
   alert('To connect with a live Kingdom Fit coach, reach out to your group administrator.');
 }
 
-function findProfessional() {
-  if (currentCoach === 'anna') {
-    alert('For personalized medical nutrition therapy, please consult:\n\n• Your primary care physician\n• A registered dietitian (RD)\n• NASM-certified nutrition coach');
-  } else {
-    alert('For mental health support, please reach out to:\n\n• A licensed therapist or counselor\n• Your pastor or church counseling team\n• SAMHSA Helpline: 1-800-662-4357 (free, confidential)');
-  }
+function findProfessional(){showMentalResources();}
+
+function showMentalResources(){
+  showResourceModal('&#129504; Mental Health Resources',
+    '<div style="margin-bottom:14px"><div style="font-weight:600;margin-bottom:6px">Crisis Support (24/7)</div>'
+    +'<div style="font-size:13px;color:var(--tx2);margin-bottom:6px">988 Suicide &amp; Crisis Lifeline — call or text <strong>988</strong></div>'
+    +'<div style="font-size:13px;color:var(--tx2);margin-bottom:6px">SAMHSA Helpline — <strong>1-800-662-4357</strong></div>'
+    +'<div style="font-size:13px;color:var(--tx2)">Crisis Text Line — text <strong>HOME to 741741</strong></div></div>'
+    +'<div style="margin-bottom:14px"><div style="font-weight:600;margin-bottom:6px">Find a Licensed Counselor</div>'
+    +'<div style="font-size:13px;color:var(--tx2);margin-bottom:6px">Psychology Today: <a href="https://www.psychologytoday.com/us/therapists" target="_blank" style="color:var(--gold)">psychologytoday.com</a></div>'
+    +'<div style="font-size:13px;color:var(--tx2)">Christian Counseling: <a href="https://www.aacc.net/find-a-counselor" target="_blank" style="color:var(--gold)">aacc.net</a></div></div>'
+    +'<div><div style="font-weight:600;margin-bottom:6px">Faith &amp; Mental Wellness</div>'
+    +'<div style="font-size:13px;color:var(--tx2)">Connect with your pastor or church counseling team for spiritual support alongside professional care.</div></div>'
+  );
+}
+
+function showNutritionResources(){
+  showResourceModal('&#127825; Nutrition Resources',
+    '<div style="margin-bottom:14px"><div style="font-weight:600;margin-bottom:6px">Find a Registered Dietitian</div>'
+    +'<div style="font-size:13px;color:var(--tx2);margin-bottom:6px">Academy of Nutrition: <a href="https://www.eatright.org/find-a-nutrition-expert" target="_blank" style="color:var(--gold)">eatright.org</a></div>'
+    +'<div style="font-size:13px;color:var(--tx2)">Your primary care physician can refer you to a clinical dietitian.</div></div>'
+    +'<div style="margin-bottom:14px"><div style="font-weight:600;margin-bottom:6px">Faith-Based Nutrition</div>'
+    +'<div style="font-size:13px;color:var(--tx2);margin-bottom:6px">Daniel Fast: <a href="https://www.daniel-fast.com" target="_blank" style="color:var(--gold)">daniel-fast.com</a></div>'
+    +'<div style="font-size:13px;color:var(--tx2)">Your body is a temple — 1 Corinthians 6:19-20</div></div>'
+    +'<div><div style="font-weight:600;margin-bottom:6px">General Guidance</div>'
+    +'<div style="font-size:13px;color:var(--tx2)">USDA MyPlate: <a href="https://www.myplate.gov" target="_blank" style="color:var(--gold)">myplate.gov</a></div></div>'
+  );
+}
+
+function showResourceModal(title, bodyHtml){
+  var modal = document.createElement('div');
+  modal.style.cssText = 'position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.75);display:flex;align-items:flex-end';
+  var inner = document.createElement('div');
+  inner.style.cssText = 'background:var(--sf);border-radius:var(--r) var(--r) 0 0;padding:24px 20px 40px;width:100%;max-width:480px;margin:0 auto;max-height:80vh;overflow-y:auto';
+  inner.innerHTML = '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">'
+    +'<h3 style="margin:0">'+title+'</h3>'
+    +'<button id="res-modal-close2" style="background:none;border:none;color:var(--tx2);cursor:pointer;font-size:22px;padding:0">&#215;</button>'
+    +'</div>'+bodyHtml;
+  modal.appendChild(inner);
+  modal.onclick = function(e){ if(e.target===modal) modal.remove(); };
+  document.body.appendChild(modal);
+  var closeBtn = document.getElementById('res-modal-close');
+  if(closeBtn) closeBtn.onclick = function(){ modal.remove(); };
 }
 
 // Allow Enter key to send (Shift+Enter for newline)
