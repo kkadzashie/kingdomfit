@@ -71,7 +71,7 @@ textarea{resize:none;height:72px}
 .streak-badge{display:inline-block;background:var(--gd);border:1px solid var(--gb);color:var(--gold);font-size:10px;font-weight:600;padding:2px 6px;border-radius:99px;margin-left:4px}
 .tabs{display:flex;border-bottom:1px solid var(--bd);margin-bottom:0}
 .tab{display:none}
-.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:var(--sf);border-top:1px solid var(--bd);display:flex;z-index:100;padding-bottom:env(safe-area-inset-bottom,0px)}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;width:100%;background:var(--sf);border-top:1px solid var(--bd);display:flex;z-index:99;padding-bottom:env(safe-area-inset-bottom,0px);-webkit-transform:translateZ(0);transform:translateZ(0)}
 .bn-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 2px 10px;cursor:pointer;border:none;background:none;color:var(--tx2);font-size:10px;font-weight:500;gap:4px;transition:color .15s;-webkit-tap-highlight-color:transparent}
 .bn-item.active{color:var(--gold)}
 .nav{padding:12px 20px 10px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:90;background:var(--bg);border-bottom:1px solid var(--bd)}
@@ -398,7 +398,7 @@ textarea{resize:none;height:72px}
   </nav>
 
   <!-- RESOURCES / COACHES TAB -->
-  <div id="tab-coaches" style="display:none;position:fixed;inset:0;z-index:80;background:var(--bg);overflow-y:auto;padding-bottom:80px">
+  <div id="tab-coaches" style="display:none;position:fixed;top:0;left:0;right:0;bottom:65px;z-index:80;background:var(--bg);overflow-y:auto;-webkit-overflow-scrolling:touch">
 
     <!-- Coach selector -->
     <div id="coach-selector-view" style="padding:16px 20px;padding-top:16px">
@@ -467,7 +467,7 @@ textarea{resize:none;height:72px}
     </div>
 
     <!-- Full-screen chat view -->
-    <div id="coach-chat" style="display:none;flex-direction:column;position:fixed;inset:0;z-index:85;background:var(--bg)">
+    <div id="coach-chat" style="display:none;flex-direction:column;position:fixed;top:0;left:0;right:0;bottom:0;z-index:150;background:var(--bg)">
       <!-- Chat header -->
       <div style="display:flex;align-items:center;gap:12px;padding:14px 20px;background:var(--sf);border-bottom:1px solid var(--bd);flex-shrink:0">
         <button onclick="clearCoach()" style="background:none;border:none;color:var(--tx2);cursor:pointer;font-size:22px;padding:0;line-height:1">&#8592;</button>
@@ -480,7 +480,7 @@ textarea{resize:none;height:72px}
       <!-- Messages -->
       <div id="coach-messages" style="flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:12px;min-height:0;-webkit-overflow-scrolling:touch"></div>
       <!-- Input bar — fixed at bottom of chat -->
-      <div style="padding:12px 16px 24px;background:var(--sf);border-top:1px solid var(--bd);flex-shrink:0">
+      <div style="padding:12px 16px;padding-bottom:calc(12px + env(safe-area-inset-bottom,0px));background:var(--sf);border-top:1px solid var(--bd);flex-shrink:0">
         <div style="display:flex;gap:10px;align-items:flex-end">
           <textarea id="coach-input" placeholder="Ask your question..." rows="2" style="flex:1;min-height:52px;max-height:120px;resize:none;font-size:15px;padding:12px 14px;background:var(--sf2);border:1px solid var(--bd);border-radius:14px;color:var(--tx);font-family:inherit;line-height:1.5;width:0"></textarea>
           <button onclick="sendCoachMessage()" id="coach-send-btn" style="background:var(--gold);border:none;border-radius:14px;padding:14px 20px;font-size:15px;font-weight:600;color:#0a0a0a;cursor:pointer;flex-shrink:0;height:52px;align-self:flex-end">Send</button>
@@ -532,7 +532,7 @@ textarea{resize:none;height:72px}
 </div>
 
 <!-- FAB -->
-<button id="fab" onclick="openMonthLogChoice()" style="display:none;position:fixed;bottom:28px;right:24px;width:56px;height:56px;border-radius:50%;background:var(--gold);border:none;cursor:pointer;box-shadow:0 4px 20px rgba(201,168,76,.35);z-index:50;align-items:center;justify-content:center">
+<button id="fab" onclick="openMonthLogChoice()" style="display:none;position:fixed;bottom:84px;right:20px;width:56px;height:56px;border-radius:50%;background:var(--gold);border:none;cursor:pointer;box-shadow:0 4px 20px rgba(201,168,76,.35);z-index:95;align-items:center;justify-content:center">
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
 </button>
 
@@ -943,23 +943,15 @@ async function renderFeed(){
         +'</div>';
     }).join('');
   }catch(e){list.innerHTML='<p class="muted" style="font-size:13px;padding:8px 0">Could not load feed.</p>'}
-  // Auto-load comments for items that have them
-  try{
-    var feedItems2 = document.querySelectorAll('[id^="feed-"]');
-    feedItems2.forEach(function(el){
-      var wid = el.id.replace('feed-','');
-      var section = document.getElementById('comments-'+wid);
-      if(section){
-        loadComments(parseInt(wid)).then(function(){
-          // If has comments, auto-open
-          var list2 = document.getElementById('comment-list-'+wid);
-          if(list2 && list2.children.length > 0){
-            section.classList.add('open');
-          }
-        });
-      }
-    });
-  }catch(e2){}
+  // Auto-load comment counts (non-blocking)
+  setTimeout(function(){
+    try{
+      document.querySelectorAll('[id^="comments-"]').forEach(function(sec){
+        var wid = sec.id.replace('comments-','');
+        loadComments(parseInt(wid));
+      });
+    }catch(e2){}
+  }, 500);
 }
 
 async function toggleComments(workoutId, btn){
