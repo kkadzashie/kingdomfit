@@ -113,6 +113,19 @@ textarea{resize:none;height:72px}
 .feed-meta{font-size:11px;color:var(--tx2)}
 .reaction-bar{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
 .reaction-btn{background:var(--sf2);border:1px solid var(--bd);border-radius:99px;padding:4px 10px;font-size:13px;cursor:pointer;transition:all .12s}
+.comment-section{display:none;margin-top:8px;padding-top:8px;border-top:1px solid var(--bd)}
+.comment-section.open{display:block}
+.comment-item{padding:4px 0;font-size:13px;line-height:1.5}
+.comment-item .cn{font-weight:600;color:var(--tx);font-size:12px;margin-right:4px}
+.comment-item .cb{color:var(--tx2);font-size:13px}
+.comment-reply-btn{background:none;border:none;color:var(--tx3);font-size:11px;cursor:pointer;padding:0 0 0 6px}
+.reply-item{padding:2px 0 2px 12px;font-size:12px;border-left:2px solid var(--bd2);margin-top:2px}
+.reply-item .cn{font-weight:600;color:var(--tx);font-size:11px;margin-right:4px}
+.reply-item .cb{color:var(--tx2)}
+.comment-input-row{display:flex;gap:6px;margin-top:8px;align-items:center}
+.comment-input-row input{flex:1;background:var(--sf2);border:1px solid var(--bd);border-radius:20px;padding:7px 12px;color:var(--tx);font-size:13px;font-family:inherit}
+.comment-post-btn{background:none;border:none;color:var(--gold);font-size:13px;font-weight:600;cursor:pointer;padding:4px 6px;flex-shrink:0}
+.comment-toggle{background:none;border:none;color:var(--tx2);font-size:11px;cursor:pointer;padding:0;margin-top:4px}
 .reaction-btn.reacted{background:var(--gd);border-color:var(--gb)}
 .reaction-btn:active{transform:scale(0.95)}
 .seg{display:flex;background:var(--sf2);border-radius:var(--rsm);padding:3px;gap:3px;margin-bottom:14px}
@@ -902,7 +915,7 @@ async function renderFeed(){
         +'<div id="comment-list-'+w.id+'"></div>'
         +'<div class="comment-input-row">'
         +'<input type="text" id="comment-input-'+w.id+'" placeholder="Add a comment..." onkeydown="if(event.key===\'Enter\')submitComment('+w.id+')">'
-        +'<button class="btn btn-gold" style="padding:8px 12px;font-size:12px;margin:0" onclick="submitComment('+w.id+')">Post</button>'
+        +'<button class="comment-post-btn" onclick="submitComment('+w.id+')">Post</button>'
         +'</div></div>'
         +'</div>';
     }).join('');
@@ -929,8 +942,37 @@ async function loadComments(workoutId){
       list.innerHTML = '<p class="muted" style="font-size:12px;padding:4px 0">No comments yet. Be the first!</p>';
       return;
     }
-    list.innerHTML = comments.map(function(c){
-      return '<div class="comment-item"><span class="comment-name">'+c.user_name+'</span><span class="comment-text">'+c.body+'</span></div>';
+    var topLevel = comments.filter(function(c){ return !c.parent_id; });
+    var replies = comments.filter(function(c){ return c.parent_id; });
+    list.innerHTML = topLevel.map(function(c){
+      var cReplies = replies.filter(function(r){ return r.parent_id===c.id; });
+      var replyHtml = cReplies.map(function(r){
+        return '<div class="reply-item"><span class="cn">'+r.user_name+'</span><span class="cb">'+r.body+'</span></div>';
+      }).join('');
+      return '<div class="comment-item">'
+        +'<span class="cn">'+c.user_name+'</span>'
+        +'<span class="cb">'+c.body+'</span>'
+        +'<button class="comment-reply-btn" onclick="showReplyInput('+c.id+')">Reply</button>'
+        +(replyHtml?'<div style="margin-top:4px">'+replyHtml+'</div>':'')
+        +'<div id="reply-input-'+c.id+'" style="display:none;margin-top:4px">'
+        +'<div class="comment-input-row">'
+        +'<input type="text" placeholder="Add a reply..." id="reply-text-'+c.id+'" onkeydown="if(event.key==String.fromCharCode(13))submitReply('+c.id+','+c.workout_id+')">'
+        +'<button class="comment-post-btn" onclick="submitReply('+c.id+','+c.workout_id+')">Post</button>'
+        +'</div></div>'
+        +'</div>';
+    }).join('');
+    var dummy = comments.map(function(c){
+      return '<div class="comment-item">'
+        +'<span class="cn">'+c.user_name+'</span>'
+        +'<span class="cb">'+c.body+'</span>'
+        +'<button class="comment-reply-btn" onclick="showReplyInput('+c.id+')">Reply</button>'
+        +'<div id="reply-list-'+c.id+'" style="margin-top:2px"></div>'
+        +'<div id="reply-input-'+c.id+'" style="display:none;margin-top:4px">'
+        +'<div class="comment-input-row">'
+        +'<input type="text" placeholder="Add a reply..." id="reply-text-'+c.id+'" onkeydown="if(event.key==String.fromCharCode(13))submitReply('+c.id+','+c.workout_id+')">'
+        +'<button class="comment-post-btn" onclick="submitReply('+c.id+','+c.workout_id+')">Post</button>'
+        +'</div></div>'
+        +'</div>';
     }).join('');
     // Update toggle button count
     var btn = document.querySelector('#feed-'+workoutId+' .comment-toggle');
@@ -938,6 +980,32 @@ async function loadComments(workoutId){
   }catch(e){
     list.innerHTML = '<p class="muted" style="font-size:12px">Could not load comments.</p>';
   }
+}
+
+function showReplyInput(commentId){
+  var el = document.getElementById('reply-input-'+commentId);
+  if(!el) return;
+  el.style.display = el.style.display==='none'?'block':'none';
+  if(el.style.display==='block'){
+    var inp = document.getElementById('reply-text-'+commentId);
+    if(inp) inp.focus();
+  }
+}
+
+async function submitReply(commentId, workoutId){
+  var inp = document.getElementById('reply-text-'+commentId);
+  if(!inp || !inp.value.trim()) return;
+  var body = inp.value.trim();
+  try{
+    await fetch(API+'/api/comments', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({workout_id:workoutId, user_id:user.id, body:body, parent_id:commentId})
+    });
+    inp.value='';
+    document.getElementById('reply-input-'+commentId).style.display='none';
+    await loadComments(workoutId);
+  }catch(e){}
 }
 
 async function submitComment(workoutId){

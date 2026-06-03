@@ -79,6 +79,7 @@ def init_db():
             id SERIAL PRIMARY KEY,
             workout_id INTEGER NOT NULL REFERENCES workouts(id) ON DELETE CASCADE,
             user_id INTEGER NOT NULL REFERENCES users(id),
+            parent_id INTEGER REFERENCES comments(id) ON DELETE CASCADE,
             body TEXT NOT NULL,
             created_at TIMESTAMP DEFAULT NOW()
         );
@@ -458,7 +459,7 @@ def list_invites():
 @app.route('/api/comments/<int:workout_id>')
 def get_comments(workout_id):
     conn=get_db(); cur=conn.cursor()
-    cur.execute("""SELECT c.id, c.body, c.created_at, u.name as user_name
+    cur.execute("""SELECT c.id, c.parent_id, c.workout_id, c.body, c.created_at, u.name as user_name
                    FROM comments c JOIN users u ON c.user_id=u.id
                    WHERE c.workout_id=%s ORDER BY c.created_at ASC""", (workout_id,))
     rows=[dict(r) for r in cur.fetchall()]
@@ -473,11 +474,12 @@ def add_comment():
     workout_id=data.get('workout_id')
     user_id=data.get('user_id')
     body=(data.get('body') or '').strip()
+    parent_id=data.get('parent_id')
     if not body or not workout_id or not user_id:
         return jsonify(error='Missing fields'), 400
     conn=get_db(); cur=conn.cursor()
-    cur.execute('INSERT INTO comments(workout_id,user_id,body) VALUES(%s,%s,%s) RETURNING id',
-                (workout_id, user_id, body))
+    cur.execute('INSERT INTO comments(workout_id,user_id,body,parent_id) VALUES(%s,%s,%s,%s) RETURNING id',
+                (workout_id, user_id, body, parent_id))
     cid=cur.fetchone()['id']; conn.commit(); cur.close(); conn.close()
     return jsonify(ok=True, id=cid)
 
