@@ -431,11 +431,37 @@ def admin_reset_pin():
     cur.execute('UPDATE users SET pin_hash=%s WHERE id=%s',(hash_pin(data['new_pin']),data['user_id']))
     conn.commit(); cur.close(); conn.close(); return jsonify(ok=True)
 
+
+@app.route('/api/admin/settings')
+def get_settings():
+    conn=get_db(); cur=conn.cursor()
+    cur.execute("SELECT key,value FROM app_settings")
+    rows={r['key']:r['value'] for r in cur.fetchall()}
+    cur.close(); conn.close()
+    return jsonify(rows)
+
+@app.route('/api/prize')
+def get_prize():
+    conn=get_db(); cur=conn.cursor()
+    cur.execute("SELECT value FROM app_settings WHERE key='monthly_prize'")
+    row=cur.fetchone(); cur.close(); conn.close()
+    return jsonify(prize=row['value'] if row else '')
+
+@app.route('/api/prize', methods=['POST'])
+def set_prize():
+    data=request.json; prize=data.get('prize','')
+    conn=get_db(); cur=conn.cursor()
+    cur.execute("INSERT INTO app_settings(key,value) VALUES('monthly_prize',%s) ON CONFLICT(key) DO UPDATE SET value=%s",
+                (prize, prize))
+    conn.commit(); cur.close(); conn.close()
+    return jsonify(ok=True)
+
 @app.route('/api/admin/settings',methods=['POST'])
 def update_settings():
     data=request.json; conn=get_db(); cur=conn.cursor()
     for k,v in data.items():
-        cur.execute('INSERT INTO app_settings(key,value) VALUES(%s,%s) ON CONFLICT(key) DO UPDATE SET value=%s',(k,str(v),str(v)))
+        if k in ('invite_only','monthly_prize'):  # only allow known keys
+            cur.execute('INSERT INTO app_settings(key,value) VALUES(%s,%s) ON CONFLICT(key) DO UPDATE SET value=%s',(k,str(v),str(v)))
     conn.commit(); cur.close(); conn.close(); return jsonify(ok=True)
 
 @app.route('/api/invites',methods=['POST'])

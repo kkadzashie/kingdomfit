@@ -1162,14 +1162,31 @@ function copyCode(code){
 async function loadAdminSettings(){
   var el=document.getElementById('admin-settings');
   el.innerHTML='<div class="field"><label>Monthly Prize</label><input type="text" id="prize-input" placeholder="e.g. $50 cash, gift card..." style="margin-bottom:6px"><button class="btn btn-gold" onclick="savePrize()" style="margin-bottom:12px;padding:10px;font-size:13px">Save prize</button></div><div class="field"><label>Invite-only mode</label><div style="display:flex;align-items:center;gap:12px"><input type="checkbox" id="invite-only-toggle" style="width:auto;padding:0" onchange="saveSettings()"><span class="muted" style="font-size:13px">Require invite code to join</span></div></div>';
-  fetch(API+'/api/prize').then(function(r){return r.json()}).then(function(d){if(d.prize)document.getElementById('prize-input').value=d.prize}).catch(function(){});
+  // Load prize
+  fetch(API+'/api/prize').then(function(r){return r.json()}).then(function(d){
+    if(d.prize){var pi=document.getElementById('prize-input');if(pi)pi.value=d.prize;}
+  }).catch(function(){});
+  // Load invite-only state
+  fetch(API+'/api/admin/settings').then(function(r){return r.json()}).then(function(d){
+    var tog=document.getElementById('invite-only-toggle');
+    if(tog) tog.checked = d.invite_only==='true';
+  }).catch(function(){});
 }
 
 async function savePrize(){
   var prize=document.getElementById('prize-input').value.trim();
-  await fetch(API+'/api/prize',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prize:prize})});
-  renderBoard();
-  alert('Prize updated!');
+  var r=await fetch(API+'/api/prize',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prize:prize})});
+  if(r.ok){
+    // Update prize banner immediately
+    var pb=document.getElementById('prize-banner-top');
+    var pt=document.getElementById('prize-banner-text');
+    if(pb&&pt){
+      if(prize){pb.style.display='block';pt.textContent=prize;}
+      else{pb.style.display='none';}
+    }
+    var btn=document.querySelector('[onclick="savePrize()"]');
+    if(btn){var orig=btn.textContent;btn.textContent='✓ Saved';setTimeout(function(){btn.textContent=orig;},2000);}
+  }
 }
 
 async function saveSettings(){
