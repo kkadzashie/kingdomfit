@@ -91,7 +91,7 @@ textarea{resize:none;height:72px}
 .workout-meta{font-size:12px;color:var(--tx2);margin-top:2px}
 .workout-cb{width:18px;height:18px;border-radius:4px;border:1.5px solid var(--bd2);background:var(--sf2);cursor:pointer;flex-shrink:0;margin-top:3px;display:flex;align-items:center;justify-content:center;transition:all .12s}
 .workout-cb.checked{background:var(--gold);border-color:var(--gold)}
-.delete-toolbar{position:fixed;bottom:0;left:0;right:0;max-width:430px;margin:0 auto;background:var(--sf);border-top:1px solid var(--bd2);padding:12px 20px;padding-bottom:calc(12px + env(safe-area-inset-bottom));display:flex;align-items:center;gap:10px;z-index:60}
+.delete-toolbar{position:fixed;bottom:65px;left:0;right:0;max-width:480px;margin:0 auto;background:var(--sf2);border-top:1px solid var(--gold);border-bottom:1px solid var(--bd2);padding:12px 20px;display:flex;align-items:center;gap:10px;z-index:110;box-shadow:0 -4px 20px rgba(0,0,0,.4)}
 .edit-btn{background:none;border:none;cursor:pointer;font-size:13px;font-weight:500;color:var(--gold);padding:4px 0}
 .err{font-size:12px;color:var(--rd);text-align:center;min-height:18px;margin-top:6px}
 .muted{color:var(--tx2);font-size:13px}
@@ -844,9 +844,63 @@ async function renderFeed(){
         +'<div class="row" style="margin-bottom:4px"><span class="feed-name">'+w.user_name+(isMe?' <span style="font-size:11px;color:var(--tx2)">(you)</span>':'')+' · </span><span class="feed-meta">'+label+'</span></div>'
         +'<div class="feed-act">'+w.activity+'</div>'
         +'<div class="feed-meta">'+w.duration_minutes+' min'+(w.notes?' · '+w.notes:'')+'</div>'
-        +'<div class="reaction-bar">'+reactionHtml+'</div></div>';
+        +'<div class="reaction-bar">'+reactionHtml+'</div>'
+        +'<button class="comment-toggle" onclick="toggleComments('+w.id+',this)">\ud83d\udcac Comment</button>'
+        +'<div class="comment-section" id="comments-'+w.id+'">'
+        +'<div id="comment-list-'+w.id+'"></div>'
+        +'<div class="comment-input-row">'
+        +'<input type="text" id="comment-input-'+w.id+'" placeholder="Add a comment..." onkeydown="if(event.key===\'Enter\')submitComment('+w.id+')">'
+        +'<button class="btn btn-gold" style="padding:8px 12px;font-size:12px;margin:0" onclick="submitComment('+w.id+')">Post</button>'
+        +'</div></div>'
+        +'</div>';
     }).join('');
   }catch(e){list.innerHTML='<p class="muted" style="font-size:13px;padding:8px 0">Could not load feed.</p>'}
+}
+
+async function toggleComments(workoutId, btn){
+  var section = document.getElementById('comments-'+workoutId);
+  if(section.classList.contains('open')){
+    section.classList.remove('open');
+    btn.innerHTML = '&#128172; Comment';
+    return;
+  }
+  section.classList.add('open');
+  await loadComments(workoutId);
+}
+
+async function loadComments(workoutId){
+  var list = document.getElementById('comment-list-'+workoutId);
+  try{
+    var r = await fetch(API+'/api/comments/'+workoutId);
+    var comments = await r.json();
+    if(!comments.length){
+      list.innerHTML = '<p class="muted" style="font-size:12px;padding:4px 0">No comments yet. Be the first!</p>';
+      return;
+    }
+    list.innerHTML = comments.map(function(c){
+      return '<div class="comment-item"><span class="comment-name">'+c.user_name+'</span><span class="comment-text">'+c.body+'</span></div>';
+    }).join('');
+    // Update toggle button count
+    var btn = document.querySelector('#feed-'+workoutId+' .comment-toggle');
+    if(btn) btn.innerHTML = '&#128172; '+comments.length+' comment'+(comments.length>1?'s':'');
+  }catch(e){
+    list.innerHTML = '<p class="muted" style="font-size:12px">Could not load comments.</p>';
+  }
+}
+
+async function submitComment(workoutId){
+  var input = document.getElementById('comment-input-'+workoutId);
+  var body = input.value.trim();
+  if(!body) return;
+  try{
+    await fetch(API+'/api/comments', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({workout_id:workoutId, user_id:user.id, body:body})
+    });
+    input.value = '';
+    await loadComments(workoutId);
+  }catch(e){}
 }
 
 async function toggleReaction(workoutId,emoji){

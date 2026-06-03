@@ -75,6 +75,13 @@ def init_db():
             used_by INTEGER REFERENCES users(id),
             created_at TIMESTAMP DEFAULT NOW()
         );
+        CREATE TABLE IF NOT EXISTS comments (
+            id SERIAL PRIMARY KEY,
+            workout_id INTEGER NOT NULL REFERENCES workouts(id) ON DELETE CASCADE,
+            user_id INTEGER NOT NULL REFERENCES users(id),
+            body TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT NOW()
+        );
         CREATE TABLE IF NOT EXISTS app_settings (
             key TEXT PRIMARY KEY,
             value TEXT
@@ -446,6 +453,33 @@ def list_invites():
     rows=cur.fetchall(); cur.close(); conn.close()
     return jsonify([dict(r) for r in rows])
 
+
+
+@app.route('/api/comments/<int:workout_id>')
+def get_comments(workout_id):
+    conn=get_db(); cur=conn.cursor()
+    cur.execute("""SELECT c.id, c.body, c.created_at, u.name as user_name
+                   FROM comments c JOIN users u ON c.user_id=u.id
+                   WHERE c.workout_id=%s ORDER BY c.created_at ASC""", (workout_id,))
+    rows=[dict(r) for r in cur.fetchall()]
+    cur.close(); conn.close()
+    for r in rows:
+        r['created_at'] = str(r['created_at'])
+    return jsonify(rows)
+
+@app.route('/api/comments', methods=['POST'])
+def add_comment():
+    data=request.json
+    workout_id=data.get('workout_id')
+    user_id=data.get('user_id')
+    body=(data.get('body') or '').strip()
+    if not body or not workout_id or not user_id:
+        return jsonify(error='Missing fields'), 400
+    conn=get_db(); cur=conn.cursor()
+    cur.execute('INSERT INTO comments(workout_id,user_id,body) VALUES(%s,%s,%s) RETURNING id',
+                (workout_id, user_id, body))
+    cid=cur.fetchone()['id']; conn.commit(); cur.close(); conn.close()
+    return jsonify(ok=True, id=cid)
 
 @app.route('/api/change-name', methods=['POST'])
 def change_name():
