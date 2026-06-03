@@ -70,9 +70,11 @@ textarea{resize:none;height:72px}
 .board-pts-lbl{font-size:10px;color:var(--tx3)}
 .streak-badge{display:inline-block;background:var(--gd);border:1px solid var(--gb);color:var(--gold);font-size:10px;font-weight:600;padding:2px 6px;border-radius:99px;margin-left:4px}
 .tabs{display:flex;border-bottom:1px solid var(--bd);margin-bottom:0}
-.tab{flex:1;padding:12px 4px;text-align:center;font-size:13px;font-weight:500;color:var(--tx2);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s}
-.tab.active{color:var(--tx);border-bottom-color:var(--gold)}
-.nav{padding:16px 20px 12px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--bd)}
+.tab{display:none}
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:var(--sf);border-top:1px solid var(--bd);display:flex;z-index:100;padding-bottom:env(safe-area-inset-bottom,0px)}
+.bn-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 2px 10px;cursor:pointer;border:none;background:none;color:var(--tx2);font-size:10px;font-weight:500;gap:4px;transition:color .15s;-webkit-tap-highlight-color:transparent}
+.bn-item.active{color:var(--gold)}
+.nav{padding:12px 20px 10px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:90;background:var(--bg);border-bottom:1px solid var(--bd)}
 .nav-logo{font-family:'DM Serif Display',serif;font-size:20px;color:var(--gold)}
 .avatar{width:34px;height:34px;border-radius:50%;background:var(--gd);border:1px solid var(--gb);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:var(--gold);flex-shrink:0}
 #screen-welcome{justify-content:center;padding:40px 24px}
@@ -193,17 +195,13 @@ textarea{resize:none;height:72px}
     <div class="avatar" id="nav-avatar"></div>
     <button class="btn btn-ghost btn-sm" onclick="logout()" style="color:var(--tx3);font-size:12px;padding:6px 10px">Out</button>
   </div>
-  <div class="tabs pad" style="padding-left:20px;padding-right:20px">
-    <div class="tab active" onclick="switchTab(0,this)">Today</div>
-    <div class="tab" onclick="switchTab(1,this)">Month</div>
-    <div class="tab" onclick="switchTab(2,this)">Board</div>
-    <div class="tab" onclick="switchTab(3,this)">Feed</div>
-    <div class="tab" onclick="switchTab(4,this)">Me</div>
-    <div class="tab" onclick="switchTab(5,this)">Coaches</div>
+  <!-- PRIZE BANNER -->
+  <div id="prize-banner-top" style="display:none;background:var(--gd);border-bottom:1px solid var(--gb);padding:10px 20px;text-align:center">
+    <span style="font-size:13px;color:var(--gold);font-weight:600">&#127942; This month's prize: <span id="prize-banner-text"></span></span>
   </div>
 
   <!-- TODAY -->
-  <div class="scroll-area" id="tab-today" style="padding:16px 20px 100px">
+  <div class="scroll-area" id="tab-today" style="padding:16px 20px 120px">
     <div class="stats-grid">
       <div class="stat"><div class="stat-val gold" id="st-streak">0</div><div class="stat-lbl">Day streak</div></div>
       <div class="stat"><div class="stat-val" id="st-days">0</div><div class="stat-lbl">Days this month</div></div>
@@ -358,8 +356,36 @@ textarea{resize:none;height:72px}
 </div>
 
 
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav" id="bottom-nav">
+    <button class="bn-item active" onclick="switchTab(0,this)" id="bn-0">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Today
+    </button>
+    <button class="bn-item" onclick="switchTab(1,this)" id="bn-1">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Month
+    </button>
+    <button class="bn-item" onclick="switchTab(2,this)" id="bn-2">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+      Board
+    </button>
+    <button class="bn-item" onclick="switchTab(3,this)" id="bn-3">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Feed
+    </button>
+    <button class="bn-item" onclick="switchTab(4,this)" id="bn-4">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Me
+    </button>
+    <button class="bn-item" onclick="switchTab(5,this)" id="bn-5">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      Coaches
+    </button>
+  </nav>
+
   <!-- COACHES TAB -->
-  <div class="scroll-area" id="tab-coaches" style="display:none;padding:16px 20px 100px">
+  <div class="scroll-area" id="tab-coaches" style="display:none;padding:16px 20px 120px">
     <h2 style="margin-bottom:4px">Kingdom Coaches</h2>
     <p class="muted" style="font-size:13px;margin-bottom:20px">Faith-based guidance for your whole health journey</p>
     <div style="display:flex;gap:12px;margin-bottom:20px">
@@ -439,7 +465,7 @@ textarea{resize:none;height:72px}
 </div>
 
 <!-- FAB -->
-<button id="fab" onclick="openTimerOrModal()" style="display:none;position:fixed;bottom:28px;right:24px;width:56px;height:56px;border-radius:50%;background:var(--gold);border:none;cursor:pointer;box-shadow:0 4px 20px rgba(201,168,76,.35);z-index:50;align-items:center;justify-content:center">
+<button id="fab" onclick="openMonthLogChoice()" style="display:none;position:fixed;bottom:28px;right:24px;width:56px;height:56px;border-radius:50%;background:var(--gold);border:none;cursor:pointer;box-shadow:0 4px 20px rgba(201,168,76,.35);z-index:50;align-items:center;justify-content:center">
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
 </button>
 
@@ -471,8 +497,14 @@ var loginBuf=buildPad('login-pad','login');
 function show(id){document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active')});document.getElementById(id).classList.add('active')}
 
 function switchTab(idx,el){
-  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active')});el.classList.add('active');
+  document.querySelectorAll('.bn-item').forEach(function(t){t.classList.remove('active')});
+  // el could be a bn-item or called programmatically
+  var btn=document.getElementById('bn-'+idx);
+  if(btn)btn.classList.add('active');
   ['tab-today','tab-month','tab-board','tab-feed','tab-me','tab-coaches'].forEach(function(t,i){document.getElementById(t).style.display=i===idx?'block':'none'});
+  // FAB only on Month tab
+  var fab=document.getElementById('fab');
+  if(fab)fab.style.display=idx===1?'flex':'none';
   if(idx===1)renderCalendar();
   if(idx===2)renderBoard();
   if(idx===3)renderFeed();
@@ -592,7 +624,8 @@ function renderToday(){
     var totalMin=todayMins;
     var qualBadge=todayQualifies?'<div class="pill pill-green" style="margin-bottom:8px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Day complete ('+totalMin+' min)</div>':'<div class="pill" style="background:var(--amber-dim,var(--gd));margin-bottom:8px;color:var(--gold)">'+totalMin+' / 30 min — keep going!</div>';
     var sessHtml=todaySessions.map(function(w){return '<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--bd)"><div class="workout-dot"></div><div style="flex:1;font-size:14px;font-weight:500">'+w.activity+'</div><div style="font-size:12px;color:var(--tx2)">'+w.duration_minutes+' min</div></div>';}).join('');
-    tc.innerHTML='<div class="card card-'+(todayQualifies?'green':'gold')+'">'+qualBadge+sessHtml+'</div>';
+    tc.innerHTML='<div class="card card-'+(todayQualifies?'green':'gold')+'">'+qualBadge+sessHtml+'</div>'
+    +'<div style="display:flex;gap:10px;margin-top:10px"><button class="btn btn-green" onclick="openTimer()" style="margin-bottom:0;flex:1"> Start timer</button><button class="btn" onclick="openModal(null)" style="margin-bottom:0;flex:1;font-size:13px">Log manually</button></div>';
   }else{
     tc.innerHTML='<div style="display:flex;gap:10px">'
     +'<button class="btn btn-green" onclick="openTimer()" style="margin-bottom:0;flex:1"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Start timer</button>'
@@ -1049,6 +1082,39 @@ async function changePin(){
 // ── Workout Timer ─────────────────────────────────────────────────────────────
 var timerInterval=null, timerSeconds=0, timerPaused=false, timerActivity='';
 var THIRTY_MIN=1800;
+
+function openMonthLogChoice(dateOverride){
+  var d = dateOverride || todayStr();
+  var sheet = document.createElement('div');
+  sheet.id = 'log-choice-sheet';
+  sheet.style.cssText = 'position:fixed;inset:0;z-index:150;background:rgba(0,0,0,.7);display:flex;align-items:flex-end';
+  var inner = document.createElement('div');
+  inner.style.cssText = 'background:var(--sf);border-radius:var(--r) var(--r) 0 0;padding:20px;width:100%;max-width:480px;margin:0 auto';
+  inner.innerHTML = '<div style="width:36px;height:4px;background:var(--bd2);border-radius:2px;margin:0 auto 16px"></div>'
+    +'<h3 style="margin-bottom:4px">Log workout</h3>'
+    +'<p class="muted" style="font-size:13px;margin-bottom:16px">'+d+'</p>';
+  var btn1 = document.createElement('button');
+  btn1.className = 'btn btn-green';
+  btn1.style.marginBottom = '10px';
+  btn1.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Start timer';
+  btn1.onclick = function(){ sheet.remove(); openTimer(); };
+  var btn2 = document.createElement('button');
+  btn2.className = 'btn';
+  btn2.style.cssText = 'margin-bottom:10px;font-size:13px';
+  btn2.textContent = 'Log manually';
+  btn2.onclick = function(){ sheet.remove(); openModal(d); };
+  var btn3 = document.createElement('button');
+  btn3.className = 'btn btn-ghost';
+  btn3.style.marginBottom = '0';
+  btn3.textContent = 'Cancel';
+  btn3.onclick = function(){ sheet.remove(); };
+  inner.appendChild(btn1);
+  inner.appendChild(btn2);
+  inner.appendChild(btn3);
+  sheet.appendChild(inner);
+  sheet.onclick = function(e){ if(e.target===sheet) sheet.remove(); };
+  document.body.appendChild(sheet);
+}
 
 function openTimerOrModal(dateOverride){
   if(dateOverride){openModal(dateOverride);return;}
