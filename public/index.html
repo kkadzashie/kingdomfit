@@ -71,7 +71,7 @@ textarea{resize:none;height:72px}
 .streak-badge{display:inline-block;background:var(--gd);border:1px solid var(--gb);color:var(--gold);font-size:10px;font-weight:600;padding:2px 6px;border-radius:99px;margin-left:4px}
 .tabs{display:flex;border-bottom:1px solid var(--bd);margin-bottom:0}
 .tab{display:none}
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;width:100%;background:var(--sf);border-top:1px solid var(--bd);display:flex;z-index:99;padding-bottom:env(safe-area-inset-bottom,0px);-webkit-transform:translateZ(0);transform:translateZ(0)}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;width:100%;background:var(--sf);border-top:1px solid var(--bd);display:flex;z-index:999;padding-bottom:env(safe-area-inset-bottom,16px);transform:translate3d(0,0,0);-webkit-transform:translate3d(0,0,0)}
 .bn-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 2px 10px;cursor:pointer;border:none;background:none;color:var(--tx2);font-size:10px;font-weight:500;gap:4px;transition:color .15s;-webkit-tap-highlight-color:transparent}
 .bn-item.active{color:var(--gold)}
 .nav{padding:12px 20px 10px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:90;background:var(--bg);border-bottom:1px solid var(--bd)}
@@ -209,8 +209,9 @@ textarea{resize:none;height:72px}
     <button class="btn btn-ghost btn-sm" onclick="logout()" style="color:var(--tx3);font-size:12px;padding:6px 10px">Out</button>
   </div>
   <!-- PRIZE BANNER -->
-  <div id="prize-banner-top" style="display:none" style="display:none;background:var(--gd);border-bottom:1px solid var(--gb);padding:10px 20px;text-align:center">
-    <span style="font-size:13px;color:var(--gold);font-weight:600">&#127942; This month's prize: <span id="prize-banner-text"></span></span>
+  <div id="prize-banner-top" style="display:none;background:var(--gold);padding:12px 20px;text-align:center">
+    <div style="font-size:10px;font-weight:700;letter-spacing:.1em;color:rgba(0,0,0,.5);text-transform:uppercase;margin-bottom:2px">&#127942; THIS MONTH'S PRIZE</div>
+    <div id="prize-banner-text" style="font-size:16px;font-weight:800;color:#0a0a0a;text-transform:uppercase;letter-spacing:.03em"></div>
   </div>
 
   <!-- HOME (Today + Month combined) -->
@@ -467,10 +468,10 @@ textarea{resize:none;height:72px}
     </div>
 
     <!-- Full-screen chat view -->
-    <div id="coach-chat" style="display:none;flex-direction:column;position:fixed;top:0;left:0;right:0;bottom:0;z-index:150;background:var(--bg)">
+    <div id="coach-chat" style="display:none;flex-direction:column;position:fixed;top:0;left:0;right:0;bottom:0;z-index:1001;background:var(--bg)">
       <!-- Chat header -->
       <div style="display:flex;align-items:center;gap:12px;padding:14px 20px;background:var(--sf);border-bottom:1px solid var(--bd);flex-shrink:0">
-        <button onclick="clearCoach()" style="background:none;border:none;color:var(--tx2);cursor:pointer;font-size:22px;padding:0;line-height:1">&#8592;</button>
+        <button onclick="clearCoach()" style="background:var(--sf2);border:1px solid var(--bd);color:var(--tx);cursor:pointer;font-size:16px;padding:8px 14px;border-radius:var(--rsm);font-weight:600;line-height:1;white-space:nowrap">&#8592; Back</button>
         <div id="coach-avatar" style="font-size:26px"></div>
         <div style="flex:1">
           <div id="coach-name" style="font-weight:700;font-size:16px"></div>
@@ -532,7 +533,7 @@ textarea{resize:none;height:72px}
 </div>
 
 <!-- FAB -->
-<button id="fab" onclick="openMonthLogChoice()" style="display:none;position:fixed;bottom:84px;right:20px;width:56px;height:56px;border-radius:50%;background:var(--gold);border:none;cursor:pointer;box-shadow:0 4px 20px rgba(201,168,76,.35);z-index:95;align-items:center;justify-content:center">
+<button id="fab" onclick="openMonthLogChoice()" style="display:none;position:fixed;bottom:90px;right:20px;width:56px;height:56px;border-radius:50%;background:var(--gold);border:none;cursor:pointer;box-shadow:0 4px 20px rgba(201,168,76,.35);z-index:1000;align-items:center;justify-content:center">
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
 </button>
 
@@ -943,15 +944,7 @@ async function renderFeed(){
         +'</div>';
     }).join('');
   }catch(e){list.innerHTML='<p class="muted" style="font-size:13px;padding:8px 0">Could not load feed.</p>'}
-  // Auto-load comment counts (non-blocking)
-  setTimeout(function(){
-    try{
-      document.querySelectorAll('[id^="comments-"]').forEach(function(sec){
-        var wid = sec.id.replace('comments-','');
-        loadComments(parseInt(wid));
-      });
-    }catch(e2){}
-  }, 500);
+
 }
 
 async function toggleComments(workoutId, btn){
