@@ -468,7 +468,7 @@ textarea{resize:none;height:72px}
     </div>
 
     <!-- Full-screen chat view -->
-    <div id="coach-chat" style="display:none;flex-direction:column;height:calc(100vh - 130px)">
+    <div id="coach-chat" style="display:none;flex-direction:column;min-height:calc(100vh - 200px)">
       <!-- Chat header -->
       <div style="display:flex;align-items:center;gap:12px;padding:14px 20px;background:var(--sf);border-bottom:1px solid var(--bd);flex-shrink:0">
         <button onclick="clearCoach()" style="background:var(--sf2);border:1px solid var(--bd);color:var(--tx);cursor:pointer;font-size:16px;padding:8px 14px;border-radius:var(--rsm);font-weight:600;line-height:1;white-space:nowrap">&#8592; Back</button>
@@ -479,7 +479,7 @@ textarea{resize:none;height:72px}
         </div>
       </div>
       <!-- Messages -->
-      <div id="coach-messages" style="flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:12px;min-height:0;-webkit-overflow-scrolling:touch"></div>
+      <div id="coach-messages" style="flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:12px;min-height:300px;-webkit-overflow-scrolling:touch"></div>
       <!-- Input bar — fixed at bottom of chat -->
       <div style="padding:10px 16px 12px;background:var(--sf);border-top:1px solid var(--bd);flex-shrink:0">
         <div style="display:flex;gap:10px;align-items:flex-end">

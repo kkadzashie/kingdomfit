@@ -302,10 +302,9 @@ def feed():
                u.name as user_name,u.id as user_id,
                COALESCE(json_agg(DISTINCT json_build_object('emoji',r.emoji,'user_id',r.user_id))
                FILTER(WHERE r.id IS NOT NULL),'[]') as reactions,
-               COUNT(DISTINCT c.id) as comment_count
+               0 as comment_count
         FROM workouts w JOIN users u ON u.id=w.user_id
         LEFT JOIN reactions r ON r.workout_id=w.id
-        LEFT JOIN comments c ON c.workout_id=w.id AND c.parent_id IS NULL
         WHERE w.log_date>=CURRENT_DATE-INTERVAL '7 days'
         GROUP BY w.id,u.id ORDER BY w.log_date DESC,w.logged_at DESC LIMIT 30
     """)
