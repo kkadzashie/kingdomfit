@@ -297,20 +297,47 @@ def remove_reaction(workout_id,user_id):
 @app.route('/api/feed')
 def feed():
     conn=get_db(); cur=conn.cursor()
-    cur.execute("""
-        SELECT w.id,TO_CHAR(w.log_date,'YYYY-MM-DD') as log_date,w.activity,w.duration_minutes,w.notes,
-               u.name as user_name,u.id as user_id,
-               COALESCE(json_agg(json_build_object('emoji',r.emoji,'user_id',r.user_id))
-               FILTER(WHERE r.id IS NOT NULL),'[]') as reactions
-        FROM workouts w JOIN users u ON u.id=w.user_id
-        LEFT JOIN reactions r ON r.workout_id=w.id
-        WHERE w.log_date>=CURRENT_DATE-INTERVAL '7 days'
-        GROUP BY w.id,u.id ORDER BY w.log_date DESC,w.logged_at DESC LIMIT 30
-    """)
-    rows=cur.fetchall(); cur.close(); conn.close()
-    return jsonify([dict(r) for r in rows])
+    try:
+        # Step 1: Get recent workouts
+        cur.execute("""
+            SELECT w.id, TO_CHAR(w.log_date,'YYYY-MM-DD') as log_date,
+                   w.activity, w.duration_minutes, w.notes,
+                   u.name as user_name, u.id as user_id
+            FROM workouts w
+            JOIN users u ON u.id=w.user_id
+            WHERE w.log_date >= CURRENT_DATE - INTERVAL '7 days'
+            ORDER BY w.log_date DESC, w.logged_at DESC
+            LIMIT 30
+        """)
+        workouts = [dict(r) for r in cur.fetchall()]
+        if not workouts:
+            return jsonify([])
+        
+        # Step 2: Get reactions separately
+        workout_ids = [w['id'] for w in workouts]
+        placeholders = ','.join(['%s'] * len(workout_ids))
+        cur.execute(f"SELECT workout_id, emoji, user_id FROM reactions WHERE workout_id IN ({placeholders})", workout_ids)
+        all_reactions = cur.fetchall()
+        
+        # Step 3: Attach reactions to workouts
+        reactions_map = {}
+        for r in all_reactions:
+            wid = r['workout_id']
+            if wid not in reactions_map:
+                reactions_map[wid] = []
+            reactions_map[wid].append({'emoji': r['emoji'], 'user_id': r['user_id']})
+        
+        for w in workouts:
+            w['reactions'] = reactions_map.get(w['id'], [])
+        
+        return jsonify(workouts)
+    except Exception as e:
+        conn.rollback()
+        raise e
+    finally:
+        cur.close(); conn.close()
 
-# ── Badges ────────────────────────────────────────────────────────────────────
+
 @app.route('/api/badges/<int:user_id>')
 def get_badges(user_id):
     conn=get_db(); cur=conn.cursor()
