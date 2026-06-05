@@ -468,7 +468,7 @@ textarea{resize:none;height:72px}
     </div>
 
     <!-- Full-screen chat view -->
-    <div id="coach-chat" style="display:none;flex-direction:column;min-height:calc(100vh - 200px)">
+    <div id="coach-chat" style="display:none;flex-direction:column">
       <!-- Chat header -->
       <div style="display:flex;align-items:center;gap:12px;padding:14px 20px;background:var(--sf);border-bottom:1px solid var(--bd);flex-shrink:0">
         <button onclick="clearCoach()" style="background:var(--sf2);border:1px solid var(--bd);color:var(--tx);cursor:pointer;font-size:16px;padding:8px 14px;border-radius:var(--rsm);font-weight:600;line-height:1;white-space:nowrap">&#8592; Back</button>
@@ -479,7 +479,7 @@ textarea{resize:none;height:72px}
         </div>
       </div>
       <!-- Messages -->
-      <div id="coach-messages" style="flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:12px;min-height:300px;-webkit-overflow-scrolling:touch"></div>
+      <div id="coach-messages" style="overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:12px;-webkit-overflow-scrolling:touch;height:50vh"></div>
       <!-- Input bar — fixed at bottom of chat -->
       <div style="padding:10px 16px 12px;background:var(--sf);border-top:1px solid var(--bd);flex-shrink:0">
         <div style="display:flex;gap:10px;align-items:flex-end">
@@ -574,6 +574,11 @@ function switchTab(idx,el){
     if(!el)return;
     el.style.display=i===idx?'block':'none';
   });
+  // Show prize banner only on Home, Board, Feed
+  var pb=document.getElementById('prize-banner-top');
+  if(pb&&pb.dataset.prize){
+    pb.style.display=(idx===0||idx===1||idx===2)?'block':'none';
+  }
   // When leaving coaches, reset to selector view
   if(idx!==3){
     var cc=document.getElementById('coach-chat');
@@ -834,8 +839,11 @@ async function renderBoard(){
     var pr=await fetch(API+'/api/prize');var pd=await pr.json();
     var pb=document.getElementById('prize-banner-top');
     var pt=document.getElementById('prize-banner-text');
-    if(pd.prize&&pb&&pt){pb.style.display='block';pt.textContent=pd.prize;}
-    else if(pb){pb.style.display='none';}}catch(e){}
+    if(pd.prize&&pb&&pt){
+      pb.dataset.prize=pd.prize;
+      pt.textContent=pd.prize;
+      pb.style.display='block';
+    } else if(pb){pb.style.display='none';pb.dataset.prize='';}}catch(e){}
   var list=document.getElementById('board-list');
   try{
     var r=await fetch(API+'/api/leaderboard?month='+month);
